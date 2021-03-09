@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Veox.Attendance.Record.Application.Interfaces.Services;
@@ -26,30 +25,26 @@ namespace Veox.Attendance.Record.Application.Services
         {
             var employee = await _employeeRepository.GetByDocumentNumber(registerRequestModel.DocumentNumber);
 
+            if (employee == null)
+            {
+                throw new KeyNotFoundException();
+            }
+
             var todayRecord = await _recordRepository.GetByDate(employee.Id, DateTime.Today);
 
             if (todayRecord == null)
             {
                 var yesterdayRecord = await _recordRepository.GetByDate(employee.Id, DateTime.Today.AddDays(-1));
 
-                if (yesterdayRecord.IsPresent)
+                if (yesterdayRecord != null && yesterdayRecord.IsPresent)
                 {
-                    yesterdayRecord.Details.Add(new DetailRecord {DateRecord = DateTime.Now});
+                    yesterdayRecord.Details.Add(DetailRecord.CreateWithObservation(ObservationType.CloseBySystem));
                     yesterdayRecord.IsPresent = false;
-                    yesterdayRecord.Observations.Add(new ObservationRecord
-                        {ObservationType = ObservationType.CloseBySystem, Message = "Close by system"});
+                    
                     await _recordRepository.Update(yesterdayRecord.Id, yesterdayRecord);
                 }
 
-                var record = new RecordEntity
-                {
-                    EmployeeId = employee.Id,
-                    Date = DateTime.Today,
-                    Details = new List<DetailRecord>
-                    {
-                        new DetailRecord {DateRecord = DateTime.Now}
-                    }
-                };
+                var record = RecordEntity.Create(employee.Id, true, string.Empty);
 
                 await _recordRepository.Create(record);
             }
@@ -60,12 +55,12 @@ namespace Veox.Attendance.Record.Application.Services
                 var intervalDate = DateTime.Now - lastDetail.DateRecord;
                 var intervalMinutes = intervalDate.Minutes;
 
-                if (intervalMinutes <= 10)
+                if (intervalMinutes <= 1)
                 {
-                    throw new ValidationException("Ya ha realizado una marcación");
+                    return new Response<RecordModel>("Ya ha realizado una marcación");
                 }
 
-                todayRecord.Details.Add(new DetailRecord {DateRecord = DateTime.Now});
+                todayRecord.Details.Add(DetailRecord.Create());
                 todayRecord.IsPresent = !todayRecord.IsPresent;
                 await _recordRepository.Update(todayRecord.Id, todayRecord);
             }

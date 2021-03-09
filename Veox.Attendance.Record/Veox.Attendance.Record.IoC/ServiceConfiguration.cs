@@ -12,7 +12,7 @@ namespace Veox.Attendance.Record.IoC
         public static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(s => new
-                MongoDbContext("52.152.98.91", "27017", "root", "ficticio", "attendance-record"));
+                MongoDbContext("localhost", "7000", "root", "ficticio", "attendance-record"));
             
             services.AddTransient<IRecordRepository, RecordRepository>();
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();

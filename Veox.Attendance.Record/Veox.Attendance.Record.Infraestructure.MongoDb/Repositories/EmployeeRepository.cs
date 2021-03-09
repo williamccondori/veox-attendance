@@ -16,9 +16,11 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
             _context = context;
         }
 
-        public Task<EmployeeEntity> GetById(string employeeId)
+        public async Task<EmployeeEntity> GetById(string employeeId)
         {
-            throw new NotImplementedException();
+            var cursor = await _context.Employees.FindAsync(x => x.IsActive && x.Id == employeeId);
+            
+            return await cursor.FirstOrDefaultAsync();
         }
 
         public async Task<EmployeeEntity> GetByDocumentNumber(string documentNumber)
@@ -28,9 +30,11 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
             return await cursor.FirstOrDefaultAsync();
         }
 
-        public Task<EmployeeEntity> Create(EmployeeEntity employeeEntity)
+        public async Task<EmployeeEntity> Create(EmployeeEntity employeeEntity)
         {
-            throw new NotImplementedException();
+            await _context.Employees.InsertOneAsync(employeeEntity);
+
+            return employeeEntity;
         }
 
         public Task<EmployeeEntity> Update(string employeeId, EmployeeEntity employeeEntity)

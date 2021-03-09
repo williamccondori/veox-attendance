@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 using Veox.Attendance.Record.Domain.Entities;
 using Veox.Attendance.Record.Domain.Repositories;
 using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts;
@@ -15,25 +16,32 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
         {
             _context = context;
         }
-        
+
         public Task<IEnumerable<RecordEntity>> GetSummaryByDate(Guid employeeId, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RecordEntity> GetByDate(string employeeId, DateTime date)
+        public async Task<RecordEntity> GetByDate(string employeeId, DateTime date)
         {
-            throw new NotImplementedException();
+            var cursor = await _context.Records.FindAsync(x =>
+                x.IsActive && x.EmployeeId.Equals(employeeId) && x.Date.Equals(date));
+
+            return await cursor.FirstOrDefaultAsync();
         }
 
-        public Task<RecordEntity> Create(RecordEntity recordEntity)
+        public async Task<RecordEntity> Create(RecordEntity recordEntity)
         {
-            throw new NotImplementedException();
+            await _context.Records.InsertOneAsync(recordEntity);
+
+            return recordEntity;
         }
 
-        public Task<RecordEntity> Update(string id, RecordEntity recordEntity)
+        public async Task<RecordEntity> Update(string id, RecordEntity recordEntity)
         {
-            throw new NotImplementedException();
+            await _context.Records.ReplaceOneAsync(x => x.Id == id, recordEntity);
+
+            return recordEntity;
         }
     }
 }

@@ -1,9 +1,11 @@
-﻿using MongoDB.Bson;
+﻿using System;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Veox.Attendance.Record.Domain.Entities;
+using Veox.Attendance.Record.Infraestructure.MongoDb.Serializers;
 
 namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts
 {
@@ -14,24 +16,29 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts
         public MongoDbContext(string host, string port, string user, string password, string databaseName)
         {
             var connectionString = $"mongodb://{user}:{password}@{host}:{port}";
-            
+
             var client = new MongoClient(connectionString);
 
             _database = client.GetDatabase(databaseName);
             
+            BsonSerializer.RegisterSerializer(typeof(DateTime), new DateSerializer());
+
             BsonClassMap.RegisterClassMap<EmployeeEntity>(cm =>
-            { cm.SetIsRootClass(true);
+            {
                 cm.MapIdProperty(c => c.Id)
                     .SetIdGenerator(StringObjectIdGenerator.Instance)
                     .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                
+                cm.AutoMap();
             });
 
             BsonClassMap.RegisterClassMap<RecordEntity>(cm =>
-            { cm.SetIsRootClass(true);
+            {
                 cm.MapIdProperty(c => c.Id)
                     .SetIdGenerator(StringObjectIdGenerator.Instance)
                     .SetSerializer(new StringSerializer(BsonType.ObjectId));
 
+                cm.AutoMap();
                 //cm.MapMember(c => c.IsActive).SetElementName("isActive");
             });
         }
