@@ -1,0 +1,10 @@
+version: "3.4"
+
+services:
+  attendance-register_db:
+    image: mongo
+    container_name: attendance-register_db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ficticio
