@@ -23,11 +23,18 @@ namespace Veox.Attendance.Record.Application.Services
 
         public async Task<Response<RecordModel>> CreateAsync(RecordCreateModel registerRequestModel)
         {
-            var employee = await _employeeRepository.GetByDocumentNumber(registerRequestModel.DocumentNumber);
+            var employee =
+                await _employeeRepository.GetByDocumentNumberAndWorkspace(registerRequestModel.DocumentNumber,
+                    registerRequestModel.WorkspaceId);
 
             if (employee == null)
             {
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("No se encuentra registrado en este espacio de trabajo");
+            }
+
+            if (!employee.IsEnabled)
+            {
+                throw new KeyNotFoundException("No se encuentra habilitado para realizar la marcación");
             }
 
             var todayRecord = await _recordRepository.GetByDate(employee.Id, DateTime.Today);
@@ -40,13 +47,15 @@ namespace Veox.Attendance.Record.Application.Services
                 {
                     yesterdayRecord.Details.Add(DetailRecord.CreateWithObservation(ObservationType.CloseBySystem));
                     yesterdayRecord.IsPresent = false;
-                    
+
                     await _recordRepository.Update(yesterdayRecord.Id, yesterdayRecord);
                 }
 
-                var record = RecordEntity.Create(employee.Id, true, string.Empty);
+                var record = RecordEntity.Create(employee.Id, string.Empty);
 
                 await _recordRepository.Create(record);
+
+                todayRecord = record;
             }
             else
             {
@@ -62,6 +71,8 @@ namespace Veox.Attendance.Record.Application.Services
 
                 todayRecord.Details.Add(DetailRecord.Create());
                 todayRecord.IsPresent = !todayRecord.IsPresent;
+                todayRecord.Update(string.Empty);
+
                 await _recordRepository.Update(todayRecord.Id, todayRecord);
             }
 
@@ -70,10 +81,36 @@ namespace Veox.Attendance.Record.Application.Services
                 Name = employee.Name,
                 LastName = employee.LastName,
                 ImageProfile = employee.ImageProfile,
-                IsPresent = true
+                IsPresent = todayRecord.IsPresent,
             };
 
             return new Response<RecordModel>(response);
+        }
+
+        public async Task<Response<IEnumerable<DailyRecordResponse>>> GetDailySummaryByWorkspace(
+            DailySummaryRequest dailySummaryRequest)
+        {
+            var employees = await _employeeRepository.GetAllByWorksapce(dailySummaryRequest.WorkspaceId);
+
+            var dateQuery = dailySummaryRequest.Date ?? DateTime.Today;
+
+            var dailyRecords = new List<DailyRecordResponse>();
+
+            foreach (var employee in employees)
+            {
+                var record = await _recordRepository.GetByDate(employee.Id, dateQuery);
+
+                dailyRecords.Add(new DailyRecordResponse
+                {
+                    Name = employee.Name,
+                    LastName = employee.LastName,
+                    ImageProfile = employee.ImageProfile,
+                    IsPresent = record.IsPresent,
+                    Date = record.Date.ToShortDateString()
+                });
+            }
+
+            return new Response<IEnumerable<DailyRecordResponse>>(dailyRecords);
         }
     }
 }

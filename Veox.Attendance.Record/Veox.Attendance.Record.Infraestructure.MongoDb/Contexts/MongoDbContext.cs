@@ -20,15 +20,15 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts
             var client = new MongoClient(connectionString);
 
             _database = client.GetDatabase(databaseName);
-            
-            BsonSerializer.RegisterSerializer(typeof(DateTime), new DateSerializer());
 
+            BsonSerializer.RegisterSerializer(typeof(DateTime), new DateSerializer());
+            
             BsonClassMap.RegisterClassMap<EmployeeEntity>(cm =>
             {
                 cm.MapIdProperty(c => c.Id)
                     .SetIdGenerator(StringObjectIdGenerator.Instance)
                     .SetSerializer(new StringSerializer(BsonType.ObjectId));
-                
+                cm.MapAuditableFields();
                 cm.AutoMap();
             });
 
@@ -37,9 +37,8 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts
                 cm.MapIdProperty(c => c.Id)
                     .SetIdGenerator(StringObjectIdGenerator.Instance)
                     .SetSerializer(new StringSerializer(BsonType.ObjectId));
-
+                cm.MapAuditableFields();
                 cm.AutoMap();
-                //cm.MapMember(c => c.IsActive).SetElementName("isActive");
             });
         }
 

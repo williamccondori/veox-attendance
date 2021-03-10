@@ -4,22 +4,34 @@ using Veox.Attendance.Record.Domain.Common;
 
 namespace Veox.Attendance.Record.Domain.Entities
 {
-    public class RecordEntity : AuditableBaseEntity, IDocument
+    public class RecordEntity : IDocument, IAuditable
     {
         public string Id { get; set; }
-        public string EmployeeId { get; set; }
+        public bool IsActive { get; private set; }
+        public string CreatedBy { get; private set; }
+        public DateTime CreatedDate { get; private set; }
+        public string UpdatedBy { get; private set; }
+        public DateTime UpdatedDate { get; private set; }
+
+        public void Update(string userId)
+        {
+            UpdatedBy = userId;
+            UpdatedDate = DateTime.Now;
+        }
+
+        public string EmployeeId { get; private set; }
+        public DateTime Date { get; private set; }
         public bool IsPresent { get; set; }
-        public DateTime Date { get; set; }
         public ICollection<DetailRecord> Details { get; set; }
 
-        public static RecordEntity Create(string employeeId, bool isPresent, string userId)
+        public static RecordEntity Create(string employeeId, string userId)
         {
             var details = new List<DetailRecord> {DetailRecord.Create()};
 
             return new RecordEntity
             {
                 EmployeeId = employeeId,
-                IsPresent = isPresent,
+                IsPresent = true,
                 Date = DateTime.Today,
                 Details = details,
                 IsActive = true,

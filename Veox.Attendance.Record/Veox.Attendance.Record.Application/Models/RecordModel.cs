@@ -1,4 +1,6 @@
-﻿namespace Veox.Attendance.Record.Application.Models
+﻿using System;
+
+namespace Veox.Attendance.Record.Application.Models
 {
     public class RecordModel
     {

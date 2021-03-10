@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Veox.Attendance.Record.Domain.Entities;
@@ -16,16 +17,25 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<EmployeeEntity>> GetAllByWorksapce(string workspaceId)
+        {
+            var cursor =
+                await _context.Employees.FindAsync(x => x.IsActive && x.IsEnabled && x.WorkpaceId.Equals(workspaceId));
+
+            return await cursor.ToListAsync();
+        }
+
         public async Task<EmployeeEntity> GetById(string employeeId)
         {
-            var cursor = await _context.Employees.FindAsync(x => x.IsActive && x.Id == employeeId);
-            
+            var cursor = await _context.Employees.FindAsync(x => x.IsActive && x.Id.Equals(employeeId));
+
             return await cursor.FirstOrDefaultAsync();
         }
 
-        public async Task<EmployeeEntity> GetByDocumentNumber(string documentNumber)
+        public async Task<EmployeeEntity> GetByDocumentNumberAndWorkspace(string documentNumber, string workspaceId)
         {
-            var cursor = await _context.Employees.FindAsync(x => x.IsActive && x.DocumentNumber == documentNumber);
+            var cursor = await _context.Employees.FindAsync(x =>
+                x.IsActive && x.DocumentNumber.Equals(documentNumber) && x.WorkpaceId.Equals(workspaceId));
 
             return await cursor.FirstOrDefaultAsync();
         }

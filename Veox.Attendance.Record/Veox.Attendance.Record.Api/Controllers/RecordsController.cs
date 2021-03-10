@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Veox.Attendance.Record.Application.Interfaces.Services;
 using Veox.Attendance.Record.Application.Models;
@@ -17,11 +18,6 @@ namespace Veox.Attendance.Record.Api.Controllers
             _recordService = recordService;
         }
 
-        /// <summary>
-        /// Create a new record.
-        /// </summary>
-        /// <param name="recordCreateModel"> Record create model.</param>
-        /// <returns>Record created.</returns>
         [HttpPost]
         public async Task<ActionResult<Response<RecordModel>>> Create([FromBody] RecordCreateModel recordCreateModel)
         {
@@ -29,10 +25,24 @@ namespace Veox.Attendance.Record.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
             var response = await _recordService.CreateAsync(recordCreateModel);
 
             return Created(nameof(Create), response);
+        }
+
+        [HttpGet("summary/daily")]
+        public async Task<ActionResult<Response<IEnumerable>>> GetDailySummaryByWorkspace(
+            [FromQuery] DailySummaryRequest dailySummaryRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _recordService.GetDailySummaryByWorkspace(dailySummaryRequest);
+
+            return Ok(response);
         }
     }
 }

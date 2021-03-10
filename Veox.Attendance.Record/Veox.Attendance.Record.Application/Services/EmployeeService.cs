@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Veox.Attendance.Record.Application.Interfaces.Services;
 using Veox.Attendance.Record.Application.Models;
 using Veox.Attendance.Record.Domain.Entities;
@@ -22,7 +21,7 @@ namespace Veox.Attendance.Record.Application.Services
 
             if (existingEmployee == null)
             {
-                var newEmployee = EmployeeEntity.Create(employeeModel.Id, employeeModel.Name, employeeModel.LastName,
+                var newEmployee = EmployeeEntity.Create(employeeModel.Id, employeeModel.WorkspaceId, employeeModel.Name, employeeModel.LastName,
                     employeeModel.DocumentNumber, employeeModel.ImageProfile, employeeModel.IsEnabled, string.Empty);
 
                 await _employeeRepository.Create(newEmployee);

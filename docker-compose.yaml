@@ -5,6 +5,8 @@ services:
     image: mongo
     container_name: attendance-register_db
     restart: always
+    ports: 
+      - 7000:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ficticio
