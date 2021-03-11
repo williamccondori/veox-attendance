@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Veox.Attendance.Record.Application.Interfaces.Services;
 using Veox.Attendance.Record.Application.Models;
-using Veox.Attendance.Record.Application.Wrappers;
 using Veox.Attendance.Record.Domain.Entities;
 using Veox.Attendance.Record.Domain.Repositories;
 
@@ -21,7 +20,7 @@ namespace Veox.Attendance.Record.Application.Services
             _recordRepository = recordRepository;
         }
 
-        public async Task<Response<SummaryEmployeeResponse>> CreateAsync(RecordCreateRequest recordCreateRequest)
+        public async Task<SummaryEmployeeResponse> CreateAsync(RecordCreateRequest recordCreateRequest)
         {
             var summaryEmployeeResponse = new SummaryEmployeeResponse();
 
@@ -99,23 +98,23 @@ namespace Veox.Attendance.Record.Application.Services
                 EndHour = todayRecord.GetEndHour()
             });
 
-            return new Response<SummaryEmployeeResponse>(summaryEmployeeResponse);
+            return summaryEmployeeResponse;
         }
 
-        public async Task<Response<List<DailySummaryResponse>>> GetDailySummaryByWorkspaceAsync(
+        public async Task<List<DailySummaryResponse>> GetDailySummaryAsync(
             DailySummaryRequest dailySummaryRequest)
         {
+            var dailySummaries= new List<DailySummaryResponse>();
+            
             var employees = await _employeeRepository.GetAllByWorksapce(dailySummaryRequest.WorkspaceId);
 
             var dateQuery = dailySummaryRequest.Date ?? DateTime.Today;
-
-            var dailySummary = new List<DailySummaryResponse>();
 
             foreach (var employee in employees)
             {
                 var record = await _recordRepository.GetByDate(employee.Id, dateQuery);
 
-                dailySummary.Add(new DailySummaryResponse
+                dailySummaries.Add(new DailySummaryResponse
                 {
                     Name = employee.Name,
                     LastName = employee.LastName,
@@ -128,17 +127,16 @@ namespace Veox.Attendance.Record.Application.Services
                 });
             }
 
-            return new Response<List<DailySummaryResponse>>(dailySummary);
+            return dailySummaries;
         }
 
-        public async Task<Response<SummaryEmployeeResponse>> GetSummaryByEmployeeAsync(
-            RecordSummaryRequest recordSummaryRequest)
+        public async Task<SummaryEmployeeResponse> GetSummaryByEmployeeAsync(SummaryEmployeeRequest summaryEmployeeRequest)
         {
             var summaryEmployeeResponse = new SummaryEmployeeResponse();
 
             // This code section add the employee info to response.
 
-            var employee = await _employeeRepository.GetById(recordSummaryRequest.EmployeeId);
+            var employee = await _employeeRepository.GetById(summaryEmployeeRequest.EmployeeId);
 
             if (employee == null)
             {
@@ -157,15 +155,15 @@ namespace Veox.Attendance.Record.Application.Services
 
             // This code section add the record info to response.
 
-            var startDate = recordSummaryRequest.StartDate ?? DateTime.Today;
-            var endDate = recordSummaryRequest.EndDate ?? DateTime.Today;
+            var startDate = summaryEmployeeRequest.StartDate ?? DateTime.Today;
+            var endDate = summaryEmployeeRequest.EndDate ?? DateTime.Today;
 
             if (startDate > endDate)
             {
                 throw new NotSupportedException("Invervalo de consulta incorrecto");
             }
 
-            var records = await _recordRepository.GetSummaryByDate(recordSummaryRequest.EmployeeId, startDate, endDate);
+            var records = await _recordRepository.GetSummaryByDate(summaryEmployeeRequest.EmployeeId, startDate, endDate);
 
             foreach (var record in records)
             {
@@ -178,7 +176,7 @@ namespace Veox.Attendance.Record.Application.Services
                 });
             }
 
-            return new Response<SummaryEmployeeResponse>(summaryEmployeeResponse);
+            return summaryEmployeeResponse;
         }
     }
 }

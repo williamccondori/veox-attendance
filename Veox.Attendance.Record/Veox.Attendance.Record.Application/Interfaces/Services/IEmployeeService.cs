@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Veox.Attendance.Record.Application.Models;
 
 namespace Veox.Attendance.Record.Application.Interfaces.Services
@@ -9,9 +8,9 @@ namespace Veox.Attendance.Record.Application.Interfaces.Services
         /// <summary>
         /// Create or update a employee.
         /// </summary>
-        /// <param name="employeeModel">Employee model.</param>
+        /// <param name="employeeRequest">Employee model.</param>
         /// <returns>Task completed.</returns>
-        Task SaveAsync(EmployeeModel employeeModel);
+        Task SaveAsync(EmployeeRequest employeeRequest);
         
         
         /// <summary>

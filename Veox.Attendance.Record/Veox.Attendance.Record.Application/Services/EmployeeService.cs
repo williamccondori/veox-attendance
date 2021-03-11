@@ -15,23 +15,24 @@ namespace Veox.Attendance.Record.Application.Services
             _employeeRepository = employeeRepository;
         }
 
-        public async Task SaveAsync(EmployeeModel employeeModel)
+        public async Task SaveAsync(EmployeeRequest employeeRequest)
         {
-            var existingEmployee = await _employeeRepository.GetById(employeeModel.Id);
+            var existingEmployee = await _employeeRepository.GetById(employeeRequest.Id);
 
             if (existingEmployee == null)
             {
-                var newEmployee = EmployeeEntity.Create(employeeModel.Id, employeeModel.WorkspaceId, employeeModel.Name, employeeModel.LastName,
-                    employeeModel.DocumentNumber, employeeModel.ImageProfile, employeeModel.IsEnabled, string.Empty);
+                var newEmployee = EmployeeEntity.Create(employeeRequest.Id, employeeRequest.WorkspaceId,
+                    employeeRequest.Name, employeeRequest.LastName, employeeRequest.DocumentNumber,
+                    employeeRequest.ImageProfile, employeeRequest.IsEnabled, string.Empty);
 
                 await _employeeRepository.Create(newEmployee);
             }
             else
             {
-                existingEmployee.Name = employeeModel.Name;
-                existingEmployee.LastName = employeeModel.LastName;
-                existingEmployee.IsEnabled = employeeModel.IsEnabled;
-                existingEmployee.ImageProfile = employeeModel.ImageProfile;
+                existingEmployee.Name = employeeRequest.Name;
+                existingEmployee.LastName = employeeRequest.LastName;
+                existingEmployee.IsEnabled = employeeRequest.IsEnabled;
+                existingEmployee.ImageProfile = employeeRequest.ImageProfile;
                 existingEmployee.Update(string.Empty);
 
                 await _employeeRepository.Update(existingEmployee.Id, existingEmployee);
@@ -41,9 +42,9 @@ namespace Veox.Attendance.Record.Application.Services
         public async Task DeleteAsync(string employeeId)
         {
             var existingEmployee = await _employeeRepository.GetById(employeeId);
-            
+
             existingEmployee.Delete(string.Empty);
-            
+
             await _employeeRepository.Update(existingEmployee.Id, existingEmployee);
         }
     }

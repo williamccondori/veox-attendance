@@ -19,44 +19,42 @@ namespace Veox.Attendance.Record.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Response<SummaryEmployeeResponse>>> Create([FromBody] RecordCreateRequest recordCreateRequest)
+        public async Task<IActionResult> Create([FromBody] RecordCreateRequest recordCreateRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _recordService.CreateAsync(recordCreateRequest);
-
-            return Created(nameof(Create), response);
+            var result = await _recordService.CreateAsync(recordCreateRequest);
+            
+            return Created(nameof(Create), new Response<SummaryEmployeeResponse>(result));
         }
 
         [HttpGet("summary")]
-        public async Task<ActionResult<Response<SummaryEmployeeResponse>>> GetSummaryByEmployee(
-            [FromQuery] RecordSummaryRequest recordSummaryRequest)
+        public async Task<IActionResult> GetSummaryByEmployee([FromQuery] SummaryEmployeeRequest summaryEmployeeRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _recordService.GetSummaryByEmployeeAsync(recordSummaryRequest);
+            var result = await _recordService.GetSummaryByEmployeeAsync(summaryEmployeeRequest);
 
-            return Ok(response);
+            return Ok(new Response<SummaryEmployeeResponse>(result));
         }
-        
+
         [HttpGet("summary/daily")]
-        public async Task<ActionResult<Response<List<DailySummaryResponse>>>> GetDailySummaryByWorkspace(
-            [FromQuery] DailySummaryRequest dailySummaryRequest)
+        public async Task<IActionResult> GetDailySummary([FromQuery] DailySummaryRequest dailySummaryRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _recordService.GetDailySummaryByWorkspaceAsync(dailySummaryRequest);
+            var result = await _recordService.GetDailySummaryAsync(dailySummaryRequest);
 
-            return Ok(response);
+            return Ok(new Response<List<DailySummaryResponse>>(result));
         }
     }
 }

@@ -1,18 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Veox.Attendance.Record.Application.Models;
-using Veox.Attendance.Record.Application.Wrappers;
 
 namespace Veox.Attendance.Record.Application.Interfaces.Services
 {
     public interface IRecordService
     {
-        Task<Response<List<DailySummaryResponse>>> GetDailySummaryByWorkspaceAsync(
-            DailySummaryRequest dailySummaryRequest);
+        Task<List<DailySummaryResponse>> GetDailySummaryAsync(DailySummaryRequest dailySummaryRequest);
 
-        Task<Response<SummaryEmployeeResponse>> GetSummaryByEmployeeAsync(
-            RecordSummaryRequest recordSummaryRequest);
+        Task<SummaryEmployeeResponse> GetSummaryByEmployeeAsync(SummaryEmployeeRequest summaryEmployeeRequest);
 
-        Task<Response<SummaryEmployeeResponse>> CreateAsync(RecordCreateRequest recordCreateRequest);
+        Task<SummaryEmployeeResponse> CreateAsync(RecordCreateRequest recordCreateRequest);
     }
 }

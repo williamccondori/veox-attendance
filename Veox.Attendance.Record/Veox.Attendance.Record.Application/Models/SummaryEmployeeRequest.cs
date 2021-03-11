@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Veox.Attendance.Record.Application.Models
 {
-    public class RecordSummaryRequest
+    public class SummaryEmployeeRequest
     {
         [Required] public string EmployeeId { get; set; }
         public DateTime? StartDate { get; set; }

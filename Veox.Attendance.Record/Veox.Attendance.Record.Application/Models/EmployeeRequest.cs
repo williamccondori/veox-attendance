@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Veox.Attendance.Record.Application.Models
+﻿namespace Veox.Attendance.Record.Application.Models
 {
-    public class EmployeeModel
+    public class EmployeeRequest
     {
         public string Id { get; set; }
         public string WorkspaceId { get; set; }
