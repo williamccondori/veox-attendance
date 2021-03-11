@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Veox.Attendance.Record.Application.Interfaces.Services;
 using Veox.Attendance.Record.Application.Models;
@@ -18,14 +19,14 @@ namespace Veox.Attendance.Record.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Response<SummaryEmployeeResponse>>> Create([FromBody] RecordCreateModel recordCreateModel)
+        public async Task<ActionResult<Response<SummaryEmployeeResponse>>> Create([FromBody] RecordCreateRequest recordCreateRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _recordService.CreateAsync(recordCreateModel);
+            var response = await _recordService.CreateAsync(recordCreateRequest);
 
             return Created(nameof(Create), response);
         }
@@ -45,7 +46,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         }
         
         [HttpGet("summary/daily")]
-        public async Task<ActionResult<Response<SummaryEmployeeResponse>>> GetDailySummaryByWorkspace(
+        public async Task<ActionResult<Response<List<DailySummaryResponse>>>> GetDailySummaryByWorkspace(
             [FromQuery] DailySummaryRequest dailySummaryRequest)
         {
             if (!ModelState.IsValid)

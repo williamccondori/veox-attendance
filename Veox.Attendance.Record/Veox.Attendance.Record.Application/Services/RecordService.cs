@@ -21,14 +21,14 @@ namespace Veox.Attendance.Record.Application.Services
             _recordRepository = recordRepository;
         }
 
-        public async Task<Response<SummaryEmployeeResponse>> CreateAsync(RecordCreateModel registerRequestModel)
+        public async Task<Response<SummaryEmployeeResponse>> CreateAsync(RecordCreateRequest recordCreateRequest)
         {
             var summaryEmployeeResponse = new SummaryEmployeeResponse();
 
             // This code section add the employee info to response.
 
             var employee = await _employeeRepository.GetByDocumentNumberAndWorkspace(
-                registerRequestModel.DocumentNumber, registerRequestModel.WorkspaceId);
+                recordCreateRequest.DocumentNumber, recordCreateRequest.WorkspaceId);
 
             if (employee == null)
             {
@@ -49,7 +49,7 @@ namespace Veox.Attendance.Record.Application.Services
             };
 
             summaryEmployeeResponse.Employee = employeeResponse;
-            
+
             // This code section create a new record.
 
             var todayRecord = await _recordRepository.GetByDate(employee.Id, DateTime.Today);
@@ -84,51 +84,51 @@ namespace Veox.Attendance.Record.Application.Services
                     throw new NotSupportedException("Ya ha realizado una marcación");
                 }
 
-                todayRecord.Details.Add(DetailRecord.Create());
+                todayRecord.Details.Add(DetailRecord.Create(!todayRecord.IsPresent));
                 todayRecord.IsPresent = !todayRecord.IsPresent;
                 todayRecord.Update(string.Empty);
 
                 await _recordRepository.Update(todayRecord.Id, todayRecord);
             }
 
-            summaryEmployeeResponse.Records = new List<RecordResponse>
+            summaryEmployeeResponse.Records.Add(new RecordResponse
             {
-                new RecordResponse
-                {
-                    IsPresent = todayRecord.IsPresent,
-                    Date = todayRecord.GetEndHour(),
-                    StartHour = todayRecord.GetStartHour(),
-                    EndHour = todayRecord.GetEndHour()
-                }
-            };
+                IsPresent = todayRecord.IsPresent,
+                Date = todayRecord.Date.ToShortDateString(),
+                StartHour = todayRecord.GetStartHour(),
+                EndHour = todayRecord.GetEndHour()
+            });
 
             return new Response<SummaryEmployeeResponse>(summaryEmployeeResponse);
         }
 
-        public async Task<Response<IEnumerable<DailyRecordResponse>>> GetDailySummaryByWorkspaceAsync(
+        public async Task<Response<List<DailySummaryResponse>>> GetDailySummaryByWorkspaceAsync(
             DailySummaryRequest dailySummaryRequest)
         {
             var employees = await _employeeRepository.GetAllByWorksapce(dailySummaryRequest.WorkspaceId);
 
             var dateQuery = dailySummaryRequest.Date ?? DateTime.Today;
 
-            var dailyRecords = new List<DailyRecordResponse>();
+            var dailySummary = new List<DailySummaryResponse>();
 
             foreach (var employee in employees)
             {
                 var record = await _recordRepository.GetByDate(employee.Id, dateQuery);
 
-                dailyRecords.Add(new DailyRecordResponse
+                dailySummary.Add(new DailySummaryResponse
                 {
                     Name = employee.Name,
                     LastName = employee.LastName,
+                    DocumentNumber = employee.DocumentNumber,
                     ImageProfile = employee.ImageProfile,
                     IsPresent = record.IsPresent,
-                    Date = record.Date.ToShortDateString()
+                    Date = record.Date.ToShortDateString(),
+                    StartHour = record.GetStartHour(),
+                    EndHour = record.GetEndHour()
                 });
             }
 
-            return new Response<IEnumerable<DailyRecordResponse>>(dailyRecords);
+            return new Response<List<DailySummaryResponse>>(dailySummary);
         }
 
         public async Task<Response<SummaryEmployeeResponse>> GetSummaryByEmployeeAsync(
@@ -158,9 +158,9 @@ namespace Veox.Attendance.Record.Application.Services
             // This code section add the record info to response.
 
             var startDate = recordSummaryRequest.StartDate ?? DateTime.Today;
-            var endDate = recordSummaryRequest.EndDate ?? DateTime.Today.AddDays(1).AddSeconds(-1);
+            var endDate = recordSummaryRequest.EndDate ?? DateTime.Today;
 
-            if (startDate >= endDate)
+            if (startDate > endDate)
             {
                 throw new NotSupportedException("Invervalo de consulta incorrecto");
             }
@@ -169,16 +169,13 @@ namespace Veox.Attendance.Record.Application.Services
 
             foreach (var record in records)
             {
-                summaryEmployeeResponse.Records = new List<RecordResponse>
+                summaryEmployeeResponse.Records.Add(new RecordResponse
                 {
-                    new RecordResponse
-                    {
-                        IsPresent = record.IsPresent,
-                        Date = record.GetEndHour(),
-                        StartHour = record.GetStartHour(),
-                        EndHour = record.GetEndHour()
-                    }
-                };
+                    IsPresent = record.IsPresent,
+                    Date = record.Date.ToShortDateString(),
+                    StartHour = record.GetStartHour(),
+                    EndHour = record.GetEndHour()
+                });
             }
 
             return new Response<SummaryEmployeeResponse>(summaryEmployeeResponse);

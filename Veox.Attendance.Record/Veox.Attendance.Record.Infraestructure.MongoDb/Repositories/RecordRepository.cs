@@ -17,9 +17,12 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
             _context = context;
         }
 
-        public Task<IEnumerable<RecordEntity>> GetSummaryByDate(string employeeId, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<RecordEntity>> GetSummaryByDate(string employeeId, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            var cursor = await _context.Records.FindAsync(x =>
+                x.IsActive && x.EmployeeId.Equals(employeeId) && x.Date >= startDate && x.Date <= endDate);
+            
+            return await cursor.ToListAsync();
         }
 
         public async Task<RecordEntity> GetByDate(string employeeId, DateTime date)

@@ -1,6 +1,6 @@
 ﻿namespace Veox.Attendance.Record.Application.Models
 {
-    public class RecordCreateModel
+    public class RecordCreateRequest
     {
         public string WorkspaceId { get; set; }
         public string DocumentNumber { get; set; }

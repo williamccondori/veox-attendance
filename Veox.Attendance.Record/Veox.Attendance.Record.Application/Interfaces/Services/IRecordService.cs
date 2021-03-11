@@ -7,12 +7,12 @@ namespace Veox.Attendance.Record.Application.Interfaces.Services
 {
     public interface IRecordService
     {
-        Task<Response<IEnumerable<DailyRecordResponse>>> GetDailySummaryByWorkspaceAsync(
+        Task<Response<List<DailySummaryResponse>>> GetDailySummaryByWorkspaceAsync(
             DailySummaryRequest dailySummaryRequest);
 
         Task<Response<SummaryEmployeeResponse>> GetSummaryByEmployeeAsync(
             RecordSummaryRequest recordSummaryRequest);
-        
-        Task<Response<SummaryEmployeeResponse>> CreateAsync(RecordCreateModel registerRequestModel);
+
+        Task<Response<SummaryEmployeeResponse>> CreateAsync(RecordCreateRequest recordCreateRequest);
     }
 }

@@ -45,14 +45,14 @@ namespace Veox.Attendance.Record.Domain.Entities
         {
             if (Details.Count % 2 != 0) return string.Empty;
 
-            var lastDetail = Details.Last();
+            var lastDetail = Details.Last(x => !x.IsStartHour);
 
-            return lastDetail == null ? string.Empty :  lastDetail.DateRecord.ToShortTimeString();
+            return lastDetail == null ? string.Empty : lastDetail.DateRecord.ToShortTimeString();
         }
 
         public string GetStartHour()
         {
-            var firstDetail = Details.First();
+            var firstDetail = Details.Last(x => x.IsStartHour);
 
             return firstDetail == null ? string.Empty : firstDetail.DateRecord.ToShortTimeString();
         }
@@ -61,14 +61,16 @@ namespace Veox.Attendance.Record.Domain.Entities
     public class DetailRecord
     {
         public DateTime DateRecord { get; set; }
+        public bool IsStartHour { get; set; }
         public ObservationType ObservationType { get; set; }
         public string Observation { get; set; }
 
-        public static DetailRecord Create()
+        public static DetailRecord Create(bool isStartHour = true)
         {
             return new DetailRecord
             {
                 DateRecord = DateTime.Now,
+                IsStartHour = isStartHour,
                 ObservationType = ObservationType.Ok,
                 Observation = ObservationType.Ok.ToString(),
             };
@@ -89,5 +91,6 @@ namespace Veox.Attendance.Record.Domain.Entities
     {
         Ok,
         CloseBySystem,
+        CloseByAdmin
     }
 }
