@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
-using Veox.Attendance.Record.Application.Interfaces.Services;
 using Veox.Attendance.Record.Application.Models;
+using Veox.Attendance.Record.Application.Services.Implementations.Common;
+using Veox.Attendance.Record.Application.Services.Interfaces;
 using Veox.Attendance.Record.Domain.Entities;
 using Veox.Attendance.Record.Domain.Repositories;
 
-namespace Veox.Attendance.Record.Application.Services
+namespace Veox.Attendance.Record.Application.Services.Implementations
 {
-    public class EmployeeService : IEmployeeService
+    public class EmployeeService : BaseService, IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
 

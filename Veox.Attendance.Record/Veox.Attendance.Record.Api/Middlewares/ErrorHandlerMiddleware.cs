@@ -4,15 +4,19 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Veox.Attendance.Record.Application.Exceptions;
 using Veox.Attendance.Record.Application.Wrappers;
 
 namespace Veox.Attendance.Record.Api.Middlewares
 {
-    public class ErrorHandlerMiddleware
+    /// <summary>
+    /// Execute the error handler in the application.
+    /// </summary>
+    public abstract class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        protected ErrorHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -28,22 +32,19 @@ namespace Veox.Attendance.Record.Api.Middlewares
                 var response = context.Response;
                 response.ContentType = "application/json";
 
-                var responseModel = new Response<string>(exception?.Message);
+                var responseModel = new Response<string>(exception.Message);
 
                 switch (exception)
                 {
-                    /**
-                    case ApiException e:
-                        // custom application error
-                        response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    case ApiException _:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
 
                     case ValidationException e:
-                        // custom application error
-                        response.StatusCode = (int)HttpStatusCode.UnprocessableEntity;
+                        response.StatusCode = (int) HttpStatusCode.UnprocessableEntity;
                         responseModel.Errors = e.Errors;
                         break;
-**/
+
                     case KeyNotFoundException _:
                         response.StatusCode = (int) HttpStatusCode.NotFound;
                         break;

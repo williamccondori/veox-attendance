@@ -1,10 +1,14 @@
-﻿namespace Veox.Attendance.Record.Application.Wrappers
+﻿using System.Collections.Generic;
+using Veox.Attendance.Record.Application.Exceptions;
+
+namespace Veox.Attendance.Record.Application.Wrappers
 {
     public class Response<T>
     {
         public bool Succeeded { get; set; }
-        public string Message { get; set; }
         public T Data { get; set; }
+        public string Message { get; set; }
+        public List<ValidationException.ErrorModel> Errors { get; set; }
 
         public Response(T data, string message = null)
         {

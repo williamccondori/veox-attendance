@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Veox.Attendance.Record.Application.Interfaces.Services;
+using Veox.Attendance.Record.Application.Exceptions;
 using Veox.Attendance.Record.Application.Models;
+using Veox.Attendance.Record.Application.Services.Implementations.Common;
+using Veox.Attendance.Record.Application.Services.Interfaces;
+using Veox.Attendance.Record.Application.Validators;
 using Veox.Attendance.Record.Domain.Entities;
 using Veox.Attendance.Record.Domain.Repositories;
 
-namespace Veox.Attendance.Record.Application.Services
+namespace Veox.Attendance.Record.Application.Services.Implementations
 {
-    public class RecordService : IRecordService
+    public class RecordService : BaseService, IRecordService
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IRecordRepository _recordRepository;
@@ -36,7 +39,7 @@ namespace Veox.Attendance.Record.Application.Services
 
             if (!employee.IsEnabled)
             {
-                throw new KeyNotFoundException("No se encuentra habilitado para realizar la marcación");
+                throw new ApiException("No se encuentra habilitado para realizar la marcación");
             }
 
             var employeeResponse = new EmployeeResponse
@@ -80,7 +83,7 @@ namespace Veox.Attendance.Record.Application.Services
 
                 if (intervalMinutes <= 1)
                 {
-                    throw new NotSupportedException("Ya ha realizado una marcación");
+                    throw new ApiException("Ya ha realizado una marcación previamente");
                 }
 
                 todayRecord.Details.Add(DetailRecord.Create(!todayRecord.IsPresent));
@@ -104,8 +107,10 @@ namespace Veox.Attendance.Record.Application.Services
         public async Task<List<DailySummaryResponse>> GetDailySummaryAsync(
             DailySummaryRequest dailySummaryRequest)
         {
-            var dailySummaries= new List<DailySummaryResponse>();
-            
+            Validate(new DailySummaryRequestValidator(), dailySummaryRequest);
+
+            var dailySummaries = new List<DailySummaryResponse>();
+
             var employees = await _employeeRepository.GetAllByWorksapce(dailySummaryRequest.WorkspaceId);
 
             var dateQuery = dailySummaryRequest.Date ?? DateTime.Today;
@@ -130,7 +135,8 @@ namespace Veox.Attendance.Record.Application.Services
             return dailySummaries;
         }
 
-        public async Task<SummaryEmployeeResponse> GetSummaryByEmployeeAsync(SummaryEmployeeRequest summaryEmployeeRequest)
+        public async Task<SummaryEmployeeResponse> GetSummaryByEmployeeAsync(
+            SummaryEmployeeRequest summaryEmployeeRequest)
         {
             var summaryEmployeeResponse = new SummaryEmployeeResponse();
 
@@ -160,10 +166,11 @@ namespace Veox.Attendance.Record.Application.Services
 
             if (startDate > endDate)
             {
-                throw new NotSupportedException("Invervalo de consulta incorrecto");
+                throw new ApiException("Invervalo de consulta incorrecto");
             }
 
-            var records = await _recordRepository.GetSummaryByDate(summaryEmployeeRequest.EmployeeId, startDate, endDate);
+            var records =
+                await _recordRepository.GetSummaryByDate(summaryEmployeeRequest.EmployeeId, startDate, endDate);
 
             foreach (var record in records)
             {

@@ -1,19 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Veox.Attendance.Record.Application.Interfaces.Services;
+using Microsoft.Extensions.Logging;
+using Veox.Attendance.Record.Api.Controllers.Common;
 using Veox.Attendance.Record.Application.Models;
-using Veox.Attendance.Record.Application.Wrappers;
+using Veox.Attendance.Record.Application.Services.Interfaces;
 
 namespace Veox.Attendance.Record.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class RecordsController : ControllerBase
+    public class RecordsController : BaseController<RecordsController>
     {
         private readonly IRecordService _recordService;
 
-        public RecordsController(IRecordService recordService)
+        protected RecordsController(
+            IRecordService recordService,
+            ILogger<RecordsController> logger) : base(logger)
         {
             _recordService = recordService;
         }
@@ -21,40 +23,19 @@ namespace Veox.Attendance.Record.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RecordCreateRequest recordCreateRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _recordService.CreateAsync(recordCreateRequest);
-            
-            return Created(nameof(Create), new Response<SummaryEmployeeResponse>(result));
+            return await InvokeService(_recordService, x => x.CreateAsync(recordCreateRequest), nameof(Created));
         }
 
         [HttpGet("summary")]
         public async Task<IActionResult> GetSummaryByEmployee([FromQuery] SummaryEmployeeRequest summaryEmployeeRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _recordService.GetSummaryByEmployeeAsync(summaryEmployeeRequest);
-
-            return Ok(new Response<SummaryEmployeeResponse>(result));
+            return await InvokeService(_recordService, x => x.GetSummaryByEmployeeAsync(summaryEmployeeRequest));
         }
 
         [HttpGet("summary/daily")]
         public async Task<IActionResult> GetDailySummary([FromQuery] DailySummaryRequest dailySummaryRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _recordService.GetDailySummaryAsync(dailySummaryRequest);
-
-            return Ok(new Response<List<DailySummaryResponse>>(result));
+            return await InvokeService(_recordService, x => x.GetDailySummaryAsync(dailySummaryRequest));
         }
     }
 }

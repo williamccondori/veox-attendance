@@ -8,4 +8,8 @@
       <ProjectReference Include="..\Veox.Attendance.Record.Domain\Veox.Attendance.Record.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.2" />
+    </ItemGroup>
+
 </Project>

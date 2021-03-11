@@ -8,6 +8,10 @@
       <ProjectReference Include="..\Veox.Attendance.Record.Application\Veox.Attendance.Record.Application.csproj" />
       <ProjectReference Include="..\Veox.Attendance.Record.IoC\Veox.Attendance.Record.IoC.csproj" />
     </ItemGroup>
-
-
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
+    </ItemGroup>
+    
 </Project>

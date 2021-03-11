@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Veox.Attendance.Record.Application.Models;
+using Veox.Attendance.Record.Application.Services.Interfaces.Common;
 
-namespace Veox.Attendance.Record.Application.Interfaces.Services
+namespace Veox.Attendance.Record.Application.Services.Interfaces
 {
-    public interface IEmployeeService
+    public interface IEmployeeService : IBaseService
     {
         /// <summary>
         /// Create or update a employee.

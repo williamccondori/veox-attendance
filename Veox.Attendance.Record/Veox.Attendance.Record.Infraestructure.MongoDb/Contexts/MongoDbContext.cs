@@ -13,16 +13,14 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbContext(string host, string port, string user, string password, string databaseName)
+        public MongoDbContext(string connectionString, string database)
         {
-            var connectionString = $"mongodb://{user}:{password}@{host}:{port}";
-
             var client = new MongoClient(connectionString);
 
-            _database = client.GetDatabase(databaseName);
+            _database = client.GetDatabase(database);
 
             BsonSerializer.RegisterSerializer(typeof(DateTime), new DateSerializer());
-            
+
             BsonClassMap.RegisterClassMap<EmployeeEntity>(cm =>
             {
                 cm.MapIdProperty(c => c.Id)
