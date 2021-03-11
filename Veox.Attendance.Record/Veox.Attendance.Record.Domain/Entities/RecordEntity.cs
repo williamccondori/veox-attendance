@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Veox.Attendance.Record.Domain.Common;
 
 namespace Veox.Attendance.Record.Domain.Entities
@@ -38,6 +39,22 @@ namespace Veox.Attendance.Record.Domain.Entities
                 CreatedBy = userId,
                 CreatedDate = DateTime.Now
             };
+        }
+
+        public string GetEndHour()
+        {
+            if (Details.Count % 2 != 0) return string.Empty;
+
+            var lastDetail = Details.Last();
+
+            return lastDetail == null ? string.Empty :  lastDetail.DateRecord.ToShortTimeString();
+        }
+
+        public string GetStartHour()
+        {
+            var firstDetail = Details.First();
+
+            return firstDetail == null ? string.Empty : firstDetail.DateRecord.ToShortTimeString();
         }
     }
 

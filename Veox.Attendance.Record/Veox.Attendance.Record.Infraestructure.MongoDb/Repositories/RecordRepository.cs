@@ -17,7 +17,7 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
             _context = context;
         }
 
-        public Task<IEnumerable<RecordEntity>> GetSummaryByDate(Guid employeeId, DateTime startDate, DateTime endDate)
+        public Task<IEnumerable<RecordEntity>> GetSummaryByDate(string employeeId, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }

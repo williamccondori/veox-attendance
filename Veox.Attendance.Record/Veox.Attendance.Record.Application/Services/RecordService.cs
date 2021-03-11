@@ -21,11 +21,14 @@ namespace Veox.Attendance.Record.Application.Services
             _recordRepository = recordRepository;
         }
 
-        public async Task<Response<RecordModel>> CreateAsync(RecordCreateModel registerRequestModel)
+        public async Task<Response<SummaryEmployeeResponse>> CreateAsync(RecordCreateModel registerRequestModel)
         {
-            var employee =
-                await _employeeRepository.GetByDocumentNumberAndWorkspace(registerRequestModel.DocumentNumber,
-                    registerRequestModel.WorkspaceId);
+            var summaryEmployeeResponse = new SummaryEmployeeResponse();
+
+            // This code section add the employee info to response.
+
+            var employee = await _employeeRepository.GetByDocumentNumberAndWorkspace(
+                registerRequestModel.DocumentNumber, registerRequestModel.WorkspaceId);
 
             if (employee == null)
             {
@@ -36,6 +39,18 @@ namespace Veox.Attendance.Record.Application.Services
             {
                 throw new KeyNotFoundException("No se encuentra habilitado para realizar la marcación");
             }
+
+            var employeeResponse = new EmployeeResponse
+            {
+                Name = employee.Name,
+                LastName = employee.LastName,
+                DocumentNumber = employee.DocumentNumber,
+                ImageProfile = employee.ImageProfile
+            };
+
+            summaryEmployeeResponse.Employee = employeeResponse;
+            
+            // This code section create a new record.
 
             var todayRecord = await _recordRepository.GetByDate(employee.Id, DateTime.Today);
 
@@ -66,7 +81,7 @@ namespace Veox.Attendance.Record.Application.Services
 
                 if (intervalMinutes <= 1)
                 {
-                    return new Response<RecordModel>("Ya ha realizado una marcación");
+                    throw new NotSupportedException("Ya ha realizado una marcación");
                 }
 
                 todayRecord.Details.Add(DetailRecord.Create());
@@ -76,18 +91,21 @@ namespace Veox.Attendance.Record.Application.Services
                 await _recordRepository.Update(todayRecord.Id, todayRecord);
             }
 
-            var response = new RecordModel
+            summaryEmployeeResponse.Records = new List<RecordResponse>
             {
-                Name = employee.Name,
-                LastName = employee.LastName,
-                ImageProfile = employee.ImageProfile,
-                IsPresent = todayRecord.IsPresent,
+                new RecordResponse
+                {
+                    IsPresent = todayRecord.IsPresent,
+                    Date = todayRecord.GetEndHour(),
+                    StartHour = todayRecord.GetStartHour(),
+                    EndHour = todayRecord.GetEndHour()
+                }
             };
 
-            return new Response<RecordModel>(response);
+            return new Response<SummaryEmployeeResponse>(summaryEmployeeResponse);
         }
 
-        public async Task<Response<IEnumerable<DailyRecordResponse>>> GetDailySummaryByWorkspace(
+        public async Task<Response<IEnumerable<DailyRecordResponse>>> GetDailySummaryByWorkspaceAsync(
             DailySummaryRequest dailySummaryRequest)
         {
             var employees = await _employeeRepository.GetAllByWorksapce(dailySummaryRequest.WorkspaceId);
@@ -111,6 +129,59 @@ namespace Veox.Attendance.Record.Application.Services
             }
 
             return new Response<IEnumerable<DailyRecordResponse>>(dailyRecords);
+        }
+
+        public async Task<Response<SummaryEmployeeResponse>> GetSummaryByEmployeeAsync(
+            RecordSummaryRequest recordSummaryRequest)
+        {
+            var summaryEmployeeResponse = new SummaryEmployeeResponse();
+
+            // This code section add the employee info to response.
+
+            var employee = await _employeeRepository.GetById(recordSummaryRequest.EmployeeId);
+
+            if (employee == null)
+            {
+                throw new KeyNotFoundException("No se encuentra registrado en este espacio de trabajo");
+            }
+
+            var employeeResponse = new EmployeeResponse
+            {
+                Name = employee.Name,
+                LastName = employee.LastName,
+                DocumentNumber = employee.DocumentNumber,
+                ImageProfile = employee.ImageProfile
+            };
+
+            summaryEmployeeResponse.Employee = employeeResponse;
+
+            // This code section add the record info to response.
+
+            var startDate = recordSummaryRequest.StartDate ?? DateTime.Today;
+            var endDate = recordSummaryRequest.EndDate ?? DateTime.Today.AddDays(1).AddSeconds(-1);
+
+            if (startDate >= endDate)
+            {
+                throw new NotSupportedException("Invervalo de consulta incorrecto");
+            }
+
+            var records = await _recordRepository.GetSummaryByDate(recordSummaryRequest.EmployeeId, startDate, endDate);
+
+            foreach (var record in records)
+            {
+                summaryEmployeeResponse.Records = new List<RecordResponse>
+                {
+                    new RecordResponse
+                    {
+                        IsPresent = record.IsPresent,
+                        Date = record.GetEndHour(),
+                        StartHour = record.GetStartHour(),
+                        EndHour = record.GetEndHour()
+                    }
+                };
+            }
+
+            return new Response<SummaryEmployeeResponse>(summaryEmployeeResponse);
         }
     }
 }
