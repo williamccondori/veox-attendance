@@ -100,7 +100,7 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
             var elapsedHours = todayRecord.GetElapsedHours();
             var missingHours = todayRecord.GetMissingHours();
 
-            summaryEmployeeResponse.Records = new List<RecordResponse>()
+            summaryEmployeeResponse.Records = new List<RecordResponse>
             {
                 new RecordResponse
                 {

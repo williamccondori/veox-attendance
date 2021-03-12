@@ -2,25 +2,31 @@
 using System.Collections.Generic;
 using FluentValidation.Results;
 
+#region ReSharper linter configuration.
+
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+#endregion
+
 namespace Veox.Attendance.Record.Application.Exceptions
 {
-    public class ValidationException : Exception
+    public class ApiValidationException : Exception
     {
-        public ValidationException() : base("One or more validation failures have occurred.")
+        private ApiValidationException() : base("One or more validation failures have occurred.")
         {
             Errors = new List<ErrorModel>();
         }
 
-        public List<ErrorModel> Errors { get; set; }
+        public List<ErrorModel> Errors { get; }
 
-        public ValidationException(IEnumerable<ValidationFailure> failures) : this()
+        public ApiValidationException(IEnumerable<ValidationFailure> failures) : this()
         {
             foreach (var failure in failures)
             {
-                Errors.Add(new ErrorModel()
+                Errors.Add(new ErrorModel
                 {
                     PropertyName = failure.PropertyName,
-                    ErrorMessage = failure.ErrorMessage,
+                    ErrorMessage = failure.ErrorMessage
                 });
             }
         }

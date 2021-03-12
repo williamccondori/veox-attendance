@@ -9,8 +9,15 @@ using Veox.Attendance.Record.IoC;
 
 namespace Veox.Attendance.Record.Api
 {
+    /// <summary>
+    /// Init the application.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Init the application.
+        /// </summary>
+        /// <param name="configuration">App's configuration.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -56,6 +63,8 @@ namespace Veox.Attendance.Record.Api
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app.UseErrorHandler();
 
             app.UseHealthChecks("/health");
 

@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿#region ReSharper linter configuration.
+
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable ClassNeverInstantiated.Global
+
+#endregion
+
+using System.Collections.Generic;
 
 namespace Veox.Attendance.Record.Application.Models
 {

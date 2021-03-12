@@ -3,8 +3,15 @@ using Microsoft.Extensions.Hosting;
 
 namespace Veox.Attendance.Record.Api
 {
+    /// <summary>
+    /// Program.
+    /// </summary>
     public static class Program
     {
+        /// <summary>
+        /// Init the program.
+        /// </summary>
+        /// <param name="args">Arguments.</param>
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

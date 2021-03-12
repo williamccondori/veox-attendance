@@ -21,10 +21,12 @@ namespace Veox.Attendance.Record.Domain.Entities
         }
 
         public string EmployeeId { get; private set; }
+        
+        // ReSharper disable once MemberCanBePrivate.Global
         public int TotalHours { get; private set; }
         public DateTime Date { get; private set; }
         public bool IsPresent { get; set; }
-        public ICollection<DetailRecord> Details { get; set; }
+        public ICollection<DetailRecord> Details { get; private set; }
 
         public static RecordEntity Create(string employeeId, int totalHours, string userId)
         {
@@ -127,7 +129,6 @@ namespace Veox.Attendance.Record.Domain.Entities
     public enum ObservationType
     {
         Ok,
-        CloseBySystem,
-        CloseByAdmin
+        CloseBySystem
     }
 }
