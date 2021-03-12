@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentValidation.Results;
-
-#region ReSharper linter configuration.
+﻿#region ReSharper linter configuration.
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 #endregion
+
+using System;
+using System.Collections.Generic;
+using FluentValidation.Results;
 
 namespace Veox.Attendance.Record.Application.Exceptions
 {
