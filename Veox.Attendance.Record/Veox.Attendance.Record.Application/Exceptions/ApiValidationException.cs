@@ -12,7 +12,7 @@ namespace Veox.Attendance.Record.Application.Exceptions
 {
     public class ApiValidationException : Exception
     {
-        private ApiValidationException() : base("One or more validation failures have occurred.")
+        public ApiValidationException() : base("One or more validation failures have occurred.")
         {
             Errors = new List<ErrorModel>();
         }

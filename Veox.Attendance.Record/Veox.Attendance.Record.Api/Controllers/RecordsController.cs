@@ -36,7 +36,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         /// <param name="recordCreateRequest">Record create request.</param>
         /// <returns>Summary by employee response.</returns>
         [HttpPost]
-        public async Task<ActionResult<SummaryEmployeeResponse>> Create(
+        public async Task<ActionResult<Response<SummaryEmployeeResponse>>> Create(
             [FromBody] RecordCreateRequest recordCreateRequest)
         {
             _logger.LogTrace($"Excecuting <{nameof(Create)}>");
@@ -52,7 +52,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         /// <param name="summaryEmployeeRequest">Summary by employee request.</param>
         /// <returns>Summary by employee response.</returns>
         [HttpGet("summary")]
-        public async Task<ActionResult<SummaryEmployeeResponse>> GetSummaryByEmployee(
+        public async Task<ActionResult<Response<SummaryEmployeeResponse>>> GetSummaryByEmployee(
             [FromQuery] SummaryEmployeeRequest summaryEmployeeRequest)
         {
             _logger.LogTrace($"Excecuting <{nameof(GetSummaryByEmployee)}>");
