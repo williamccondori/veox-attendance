@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
-using Veox.Attendance.Record.Domain.Common;
+using Veox.Attendance.Record.Domain.Entities.Common;
 
 namespace Veox.Attendance.Record.Infraestructure.MongoDb.Serializers
 {

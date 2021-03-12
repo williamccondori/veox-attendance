@@ -41,9 +41,9 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
             return recordEntity;
         }
 
-        public async Task<RecordEntity> Update(string id, RecordEntity recordEntity)
+        public async Task<RecordEntity> Update(string recordId, RecordEntity recordEntity)
         {
-            await _context.Records.ReplaceOneAsync(x => x.Id == id, recordEntity);
+            await _context.Records.ReplaceOneAsync(x => x.Id == recordId, recordEntity);
 
             return recordEntity;
         }

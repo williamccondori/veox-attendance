@@ -6,7 +6,7 @@ using Veox.Attendance.Record.Domain.Entities;
 using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts.Interfaces;
 using Veox.Attendance.Record.Infraestructure.MongoDb.Serializers;
 
-namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts
+namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts.Implementations
 {
     public class MongoDbContext : IMongoDbContext
     {

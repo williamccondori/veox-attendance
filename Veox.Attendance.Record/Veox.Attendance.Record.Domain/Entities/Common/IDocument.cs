@@ -1,4 +1,4 @@
-﻿namespace Veox.Attendance.Record.Domain.Common
+﻿namespace Veox.Attendance.Record.Domain.Entities.Common
 {
     public interface IDocument
     {

@@ -2,7 +2,7 @@
 using Veox.Attendance.Record.Application.Services.Implementations;
 using Veox.Attendance.Record.Application.Services.Interfaces;
 using Veox.Attendance.Record.Domain.Repositories;
-using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts;
+using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts.Implementations;
 using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts.Interfaces;
 using Veox.Attendance.Record.Infraestructure.MongoDb.Repositories;
 
@@ -13,7 +13,7 @@ namespace Veox.Attendance.Record.IoC
         public static void AddServiceDependency(this IServiceCollection services)
         {
             services.AddSingleton<IMongoDbContext, MongoDbContext>();
-            
+
             services.AddTransient<IRecordRepository, RecordRepository>();
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 

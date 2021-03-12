@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Veox.Attendance.Record.Domain.Entities;
@@ -47,9 +46,11 @@ namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
             return employeeEntity;
         }
 
-        public Task<EmployeeEntity> Update(string employeeId, EmployeeEntity employeeEntity)
+        public async Task<EmployeeEntity> Update(string employeeId, EmployeeEntity employeeEntity)
         {
-            throw new NotImplementedException();
+            await _context.Employees.ReplaceOneAsync(x => x.Id == employeeId, employeeEntity);
+
+            return employeeEntity;
         }
     }
 }

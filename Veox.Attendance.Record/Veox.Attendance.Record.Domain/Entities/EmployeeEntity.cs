@@ -1,5 +1,5 @@
 ﻿using System;
-using Veox.Attendance.Record.Domain.Common;
+using Veox.Attendance.Record.Domain.Entities.Common;
 
 namespace Veox.Attendance.Record.Domain.Entities
 {
@@ -29,12 +29,12 @@ namespace Veox.Attendance.Record.Domain.Entities
         public string DocumentNumber { get; private set; }
         public string Name { get; set; }
         public string LastName { get; set; }
+        public int TotalHours { get; set; }
         public bool IsEnabled { get; set; }
         public string ImageProfile { get; set; }
 
-        public static EmployeeEntity Create(string id, string workspaceId, string name, string lastName,
-            string documentNumber,
-            string imageProfile, bool isEnabled, string userId)
+        public static EmployeeEntity Create(string id, string workspaceId, string name, string lastName, int totalHours,
+            string documentNumber, string imageProfile, bool isEnabled, string userId)
         {
             return new EmployeeEntity
             {
@@ -42,6 +42,7 @@ namespace Veox.Attendance.Record.Domain.Entities
                 WorkpaceId = workspaceId,
                 Name = name,
                 LastName = lastName,
+                TotalHours = totalHours,
                 DocumentNumber = documentNumber,
                 ImageProfile = imageProfile,
                 IsEnabled = isEnabled,
@@ -49,6 +50,11 @@ namespace Veox.Attendance.Record.Domain.Entities
                 CreatedBy = userId,
                 CreatedDate = DateTime.Now
             };
+        }
+
+        public TimeSpan GetTotalHours()
+        {
+            return TimeSpan.FromHours(TotalHours);
         }
     }
 }

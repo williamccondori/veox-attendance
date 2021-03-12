@@ -13,6 +13,6 @@ namespace Veox.Attendance.Record.Domain.Repositories
 
         Task<RecordEntity> Create(RecordEntity recordEntity);
         
-        Task<RecordEntity> Update(string id, RecordEntity recordEntity);
+        Task<RecordEntity> Update(string recordId, RecordEntity recordEntity);
     }
 }

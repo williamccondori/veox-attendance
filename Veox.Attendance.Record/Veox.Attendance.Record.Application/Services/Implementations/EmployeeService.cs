@@ -23,7 +23,8 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
             if (existingEmployee == null)
             {
                 var newEmployee = EmployeeEntity.Create(employeeRequest.Id, employeeRequest.WorkspaceId,
-                    employeeRequest.Name, employeeRequest.LastName, employeeRequest.DocumentNumber,
+                    employeeRequest.Name, employeeRequest.LastName, employeeRequest.TotalHours,
+                    employeeRequest.DocumentNumber,
                     employeeRequest.ImageProfile, employeeRequest.IsEnabled, string.Empty);
 
                 await _employeeRepository.Create(newEmployee);
@@ -32,6 +33,7 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
             {
                 existingEmployee.Name = employeeRequest.Name;
                 existingEmployee.LastName = employeeRequest.LastName;
+                existingEmployee.TotalHours = employeeRequest.TotalHours;
                 existingEmployee.IsEnabled = employeeRequest.IsEnabled;
                 existingEmployee.ImageProfile = employeeRequest.ImageProfile;
                 existingEmployee.Update(string.Empty);

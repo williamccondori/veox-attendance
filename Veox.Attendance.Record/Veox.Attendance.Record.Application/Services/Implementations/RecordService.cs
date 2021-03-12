@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Veox.Attendance.Record.Application.Exceptions;
+using Veox.Attendance.Record.Application.Extensions;
 using Veox.Attendance.Record.Application.Models;
 using Veox.Attendance.Record.Application.Services.Implementations.Common;
 using Veox.Attendance.Record.Application.Services.Interfaces;
@@ -62,13 +63,15 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
 
                 if (yesterdayRecord != null && yesterdayRecord.IsPresent)
                 {
-                    yesterdayRecord.Details.Add(DetailRecord.CreateWithObservation(ObservationType.CloseBySystem));
+                    var yesterdayLastSecond = DateTime.Today.AddSeconds(-1);
+                    yesterdayRecord.Details.Add(DetailRecord
+                        .CreateWithObservation(yesterdayLastSecond, false, ObservationType.CloseBySystem));
                     yesterdayRecord.IsPresent = false;
 
                     await _recordRepository.Update(yesterdayRecord.Id, yesterdayRecord);
                 }
 
-                var record = RecordEntity.Create(employee.Id, string.Empty);
+                var record = RecordEntity.Create(employee.Id, employee.TotalHours, string.Empty);
 
                 await _recordRepository.Create(record);
 
@@ -83,7 +86,7 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
 
                 if (intervalMinutes <= 1)
                 {
-                    throw new ApiException("Ya ha realizado una marcación previamente");
+                    throw new ApiException("Ya ha realizado una marcación");
                 }
 
                 todayRecord.Details.Add(DetailRecord.Create(!todayRecord.IsPresent));
@@ -93,13 +96,31 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
                 await _recordRepository.Update(todayRecord.Id, todayRecord);
             }
 
-            summaryEmployeeResponse.Records.Add(new RecordResponse
+            var totalHours = todayRecord.GetTotalHours();
+            var elapsedHours = todayRecord.GetElapsedHours();
+            var missingHours = todayRecord.GetMissingHours();
+
+            summaryEmployeeResponse.Records = new List<RecordResponse>()
             {
-                IsPresent = todayRecord.IsPresent,
-                Date = todayRecord.Date.ToShortDateString(),
-                StartHour = todayRecord.GetStartHour(),
-                EndHour = todayRecord.GetEndHour()
-            });
+                new RecordResponse
+                {
+                    IsPresent = todayRecord.IsPresent,
+                    Date = todayRecord.Date.ToShortDateString(),
+                    StartHour = todayRecord.GetStartHour(),
+                    EndHour = todayRecord.GetEndHour(),
+                    TotalHours = totalHours.ToLocalString(),
+                    ElapsedHours = elapsedHours.ToLocalString(),
+                    MissingHours = missingHours.ToLocalString(),
+                    Details = todayRecord.Details.OrderByDescending(o => o.DateRecord)
+                        .Select(o => new DetailRecordResponse
+                        {
+                            Hour = o.DateRecord.ToShortTimeString(),
+                            IsStartHour = o.IsStartHour,
+                            HasObservation = o.ObservationType != ObservationType.Ok,
+                            Observation = o.Observation
+                        }).ToList()
+                }
+            };
 
             return summaryEmployeeResponse;
         }
@@ -109,7 +130,7 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
         {
             Validate(new DailySummaryRequestValidator(), dailySummaryRequest);
 
-            var dailySummaries = new List<DailySummaryResponse>();
+            var dailySummariesResponse = new List<DailySummaryResponse>();
 
             var employees = await _employeeRepository.GetAllByWorksapce(dailySummaryRequest.WorkspaceId);
 
@@ -117,25 +138,49 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
 
             foreach (var employee in employees)
             {
+                var dailySummaryResponse = new DailySummaryResponse
+                {
+                    Name = employee.Name,
+                    LastName = employee.LastName,
+                    DocumentNumber = employee.DocumentNumber,
+                    ImageProfile = employee.ImageProfile
+                };
+
                 var record = await _recordRepository.GetByDate(employee.Id, dateQuery);
 
                 if (record != null)
                 {
-                    dailySummaries.Add(new DailySummaryResponse
-                    {
-                        Name = employee.Name,
-                        LastName = employee.LastName,
-                        DocumentNumber = employee.DocumentNumber,
-                        ImageProfile = employee.ImageProfile,
-                        IsPresent = record.IsPresent,
-                        Date = record.Date.ToShortDateString(),
-                        StartHour = record.GetStartHour(),
-                        EndHour = record.GetEndHour()
-                    });
+                    dailySummaryResponse.IsPresent = record.IsPresent;
+                    dailySummaryResponse.Date = record.Date.ToShortDateString();
+                    dailySummaryResponse.StartHour = record.GetStartHour();
+                    dailySummaryResponse.EndHour = record.GetEndHour();
+                    dailySummaryResponse.TotalHours = record.GetTotalHours().ToLocalString();
+                    dailySummaryResponse.ElapsedHours = record.GetElapsedHours().ToLocalString();
+                    dailySummaryResponse.MissingHours = record.GetMissingHours().ToLocalString();
+
+                    dailySummaryResponse.Details = record.Details
+                        .OrderByDescending(o => o.DateRecord)
+                        .Select(o => new DailySummaryDetailResponse
+                        {
+                            Hour = o.DateRecord.ToShortTimeString(),
+                            IsStartHour = o.IsStartHour
+                        }).ToList();
                 }
+                else
+                {
+                    dailySummaryResponse.IsPresent = false;
+                    dailySummaryResponse.Date = DateTime.Today.ToShortDateString();
+                    dailySummaryResponse.StartHour = string.Empty;
+                    dailySummaryResponse.EndHour = string.Empty;
+                    dailySummaryResponse.TotalHours = employee.GetTotalHours().ToLocalString();
+                    dailySummaryResponse.ElapsedHours = TimeSpan.Zero.ToLocalString();
+                    dailySummaryResponse.MissingHours = employee.GetTotalHours().ToLocalString();
+                }
+
+                dailySummariesResponse.Add(dailySummaryResponse);
             }
 
-            return dailySummaries;
+            return dailySummariesResponse;
         }
 
         public async Task<SummaryEmployeeResponse> GetSummaryByEmployeeAsync(
@@ -167,26 +212,66 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
             var startDate = summaryEmployeeRequest.StartDate ?? DateTime.Today;
             var endDate = summaryEmployeeRequest.EndDate ?? DateTime.Today;
 
-            if (startDate > endDate)
+            if (startDate > endDate || endDate > DateTime.Today)
             {
-                throw new ApiException("Invervalo de consulta incorrecto");
+                throw new ApiException("El intervalo de fechas para esta consulta es incorrecto");
             }
 
-            var records =
+            var resultRecords =
                 await _recordRepository.GetSummaryByDate(summaryEmployeeRequest.EmployeeId, startDate, endDate);
 
-            foreach (var record in records)
-            {
-                summaryEmployeeResponse.Records.Add(new RecordResponse
+            var records = resultRecords
+                .OrderByDescending(x => x.Date)
+                .ToList();
+
+            summaryEmployeeResponse.Records = records
+                .Select(x => new RecordResponse
                 {
-                    IsPresent = record.IsPresent,
-                    Date = record.Date.ToShortDateString(),
-                    StartHour = record.GetStartHour(),
-                    EndHour = record.GetEndHour()
-                });
-            }
+                    IsPresent = x.IsPresent,
+                    Date = x.Date.ToShortDateString(),
+                    StartHour = x.GetStartHour(),
+                    EndHour = x.GetEndHour(),
+                    TotalHours = x.GetTotalHours().ToLocalString(),
+                    ElapsedHours = x.GetElapsedHours().ToLocalString(),
+                    MissingHours = x.GetMissingHours().ToLocalString(),
+                    Details = x.Details
+                        .OrderByDescending(o => o.DateRecord)
+                        .Select(o => new DetailRecordResponse
+                        {
+                            Hour = o.DateRecord.ToShortTimeString(),
+                            IsStartHour = o.IsStartHour,
+                            HasObservation = o.ObservationType != ObservationType.Ok,
+                            Observation = o.Observation
+                        }).ToList()
+                }).ToList();
+
+            var totalHours = CalculateTotalHours(startDate, endDate, employee.TotalHours);
+            var totalElapsedHours = GetTotalElapsedHours(records);
+            var totalMissingHours = CalculateMissingHours(totalHours, totalElapsedHours);
+
+            summaryEmployeeResponse.TotalHours = totalHours.ToLocalString();
+            summaryEmployeeResponse.ElapsedHours = totalElapsedHours.ToLocalString();
+            summaryEmployeeResponse.MissingHours = totalMissingHours.ToLocalString();
 
             return summaryEmployeeResponse;
+        }
+
+        private static TimeSpan GetTotalElapsedHours(IEnumerable<RecordEntity> records)
+        {
+            var elapsedHours = records.Sum(x => x.GetElapsedHours().Ticks);
+            return TimeSpan.FromTicks(elapsedHours);
+        }
+
+        private static TimeSpan CalculateTotalHours(DateTime startDate, DateTime endDate, int totalDailyHours)
+        {
+            var totalDays = endDate.Subtract(startDate).Days;
+            var totalHours = totalDailyHours * totalDays;
+            return TimeSpan.FromHours(totalHours);
+        }
+
+        private static TimeSpan CalculateMissingHours(TimeSpan totalHours, TimeSpan elapsedHours)
+        {
+            return totalHours.Subtract(elapsedHours);
         }
     }
 }
