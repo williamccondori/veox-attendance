@@ -1,11 +1,11 @@
 ﻿namespace Veox.Attendance.Record.Infraestructure.MongoDb
 {
-    public interface IMongoDbOptions
+    public class MongoDbOptions
     {
-        string Hostname { get; set; }
-        string Username { get; set; }
-        string Password { get; set; }
-        int Port { get; }
-        string Database { get; set; }
+        public string Hostname { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public int Port { get; set; }
+        public string Database { get; set; }
     }
 }

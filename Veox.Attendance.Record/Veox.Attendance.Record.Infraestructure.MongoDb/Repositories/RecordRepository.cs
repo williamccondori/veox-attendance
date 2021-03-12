@@ -4,24 +4,25 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Veox.Attendance.Record.Domain.Entities;
 using Veox.Attendance.Record.Domain.Repositories;
-using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts;
+using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts.Interfaces;
 
 namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
 {
     public class RecordRepository : IRecordRepository
     {
-        private readonly MongoDbContext _context;
+        private readonly IMongoDbContext _context;
 
-        public RecordRepository(MongoDbContext context)
+        public RecordRepository(IMongoDbContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<RecordEntity>> GetSummaryByDate(string employeeId, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<RecordEntity>> GetSummaryByDate(string employeeId, DateTime startDate,
+            DateTime endDate)
         {
             var cursor = await _context.Records.FindAsync(x =>
                 x.IsActive && x.EmployeeId.Equals(employeeId) && x.Date >= startDate && x.Date <= endDate);
-            
+
             return await cursor.ToListAsync();
         }
 

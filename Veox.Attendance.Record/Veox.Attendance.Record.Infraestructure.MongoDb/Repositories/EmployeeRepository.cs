@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Veox.Attendance.Record.Domain.Entities;
 using Veox.Attendance.Record.Domain.Repositories;
-using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts;
+using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts.Interfaces;
 
 namespace Veox.Attendance.Record.Infraestructure.MongoDb.Repositories
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly MongoDbContext _context;
+        private readonly IMongoDbContext _context;
 
-        public EmployeeRepository(MongoDbContext context)
+        public EmployeeRepository(IMongoDbContext context)
         {
             _context = context;
         }

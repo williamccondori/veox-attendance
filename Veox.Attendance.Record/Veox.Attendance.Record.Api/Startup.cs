@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Veox.Attendance.Record.Api.Extensions;
-using Veox.Attendance.Record.Api.Middlewares;
 using Veox.Attendance.Record.Infraestructure.MongoDb;
 using Veox.Attendance.Record.IoC;
 
@@ -25,9 +24,7 @@ namespace Veox.Attendance.Record.Api
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            var mongoDbOptions = Configuration.GetSection("MongoDb").Get<IMongoDbOptions>();
-            
-            services.AddMongoDbConfiguration(mongoDbOptions);
+            services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
 
             services.AddControllers();
 
@@ -37,7 +34,7 @@ namespace Veox.Attendance.Record.Api
 
             services.AddHealthChecks();
 
-            ServiceConfiguration.ConfigureServices(services);
+            services.AddServiceDependency();
         }
 
         /// <summary>
@@ -59,8 +56,6 @@ namespace Veox.Attendance.Record.Api
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseHealthChecks("/health");
 

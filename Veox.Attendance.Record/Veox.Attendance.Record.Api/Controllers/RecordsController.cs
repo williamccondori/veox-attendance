@@ -13,7 +13,7 @@ namespace Veox.Attendance.Record.Api.Controllers
     {
         private readonly IRecordService _recordService;
 
-        protected RecordsController(
+        public RecordsController(
             IRecordService recordService,
             ILogger<RecordsController> logger) : base(logger)
         {

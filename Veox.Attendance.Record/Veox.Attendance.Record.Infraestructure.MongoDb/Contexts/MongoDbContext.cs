@@ -1,40 +1,40 @@
 ﻿using System;
-using MongoDB.Bson;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.IdGenerators;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Veox.Attendance.Record.Domain.Entities;
+using Veox.Attendance.Record.Infraestructure.MongoDb.Contexts.Interfaces;
 using Veox.Attendance.Record.Infraestructure.MongoDb.Serializers;
 
 namespace Veox.Attendance.Record.Infraestructure.MongoDb.Contexts
 {
-    public class MongoDbContext : MongoClient
+    public class MongoDbContext : IMongoDbContext
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbContext(string connectionString, string database)
+        public MongoDbContext(IOptions<MongoDbOptions> mongoDbOptions)
         {
+            var options = mongoDbOptions.Value;
+
+            var connectionString =
+                $"mongodb://{options.Username}:{options.Password}@{options.Hostname}:{options.Port}";
+
             var client = new MongoClient(connectionString);
 
-            _database = client.GetDatabase(database);
+            _database = client.GetDatabase(options.Database);
 
             BsonSerializer.RegisterSerializer(typeof(DateTime), new DateSerializer());
 
             BsonClassMap.RegisterClassMap<EmployeeEntity>(cm =>
             {
-                cm.MapIdProperty(c => c.Id)
-                    .SetIdGenerator(StringObjectIdGenerator.Instance)
-                    .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                cm.MapId();
                 cm.MapAuditableFields();
                 cm.AutoMap();
             });
 
             BsonClassMap.RegisterClassMap<RecordEntity>(cm =>
             {
-                cm.MapIdProperty(c => c.Id)
-                    .SetIdGenerator(StringObjectIdGenerator.Instance)
-                    .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                cm.MapId();
                 cm.MapAuditableFields();
                 cm.AutoMap();
             });

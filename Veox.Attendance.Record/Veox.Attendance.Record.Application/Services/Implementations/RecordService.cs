@@ -119,17 +119,20 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
             {
                 var record = await _recordRepository.GetByDate(employee.Id, dateQuery);
 
-                dailySummaries.Add(new DailySummaryResponse
+                if (record != null)
                 {
-                    Name = employee.Name,
-                    LastName = employee.LastName,
-                    DocumentNumber = employee.DocumentNumber,
-                    ImageProfile = employee.ImageProfile,
-                    IsPresent = record.IsPresent,
-                    Date = record.Date.ToShortDateString(),
-                    StartHour = record.GetStartHour(),
-                    EndHour = record.GetEndHour()
-                });
+                    dailySummaries.Add(new DailySummaryResponse
+                    {
+                        Name = employee.Name,
+                        LastName = employee.LastName,
+                        DocumentNumber = employee.DocumentNumber,
+                        ImageProfile = employee.ImageProfile,
+                        IsPresent = record.IsPresent,
+                        Date = record.Date.ToShortDateString(),
+                        StartHour = record.GetStartHour(),
+                        EndHour = record.GetEndHour()
+                    });
+                }
             }
 
             return dailySummaries;
