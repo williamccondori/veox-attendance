@@ -1,8 +1,4 @@
-﻿#region ReSharper linter configuration.
-
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-
-#endregion
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 using System;
 using System.Globalization;

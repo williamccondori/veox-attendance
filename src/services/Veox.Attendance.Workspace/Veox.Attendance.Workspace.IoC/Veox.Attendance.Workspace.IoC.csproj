@@ -5,10 +5,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Veox.Attendance.Workspace.Application\Veox.Attendance.Workspace.Application.csproj"/>
+        <ProjectReference Include="..\Veox.Attendance.Workspace.Application\Veox.Attendance.Workspace.Application.csproj" />
+        <ProjectReference Include="..\Veox.Attendance.Workspace.Infraestructure.MongoDb\Veox.Attendance.Workspace.Infraestructure.MongoDb.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     </ItemGroup>
 </Project>

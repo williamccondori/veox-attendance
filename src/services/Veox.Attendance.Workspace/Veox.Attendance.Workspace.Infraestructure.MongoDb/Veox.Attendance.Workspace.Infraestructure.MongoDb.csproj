@@ -3,13 +3,14 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
-
+    
     <ItemGroup>
-        <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.2" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+        <PackageReference Include="MongoDB.Driver" Version="2.12.0" />
     </ItemGroup>
-
+    
     <ItemGroup>
       <ProjectReference Include="..\Veox.Attendance.Workspace.Domain\Veox.Attendance.Workspace.Domain.csproj" />
     </ItemGroup>
-
+    
 </Project>

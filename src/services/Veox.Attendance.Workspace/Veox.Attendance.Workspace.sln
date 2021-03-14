@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veox.Attendance.Workspace.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veox.Attendance.Workspace.IoC", "Veox.Attendance.Workspace.IoC\Veox.Attendance.Workspace.IoC.csproj", "{18AC9330-9FE8-4AB6-BF40-ABDF5D1AFDF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veox.Attendance.Workspace.Infraestructure.MongoDb", "Veox.Attendance.Workspace.Infraestructure.MongoDb\Veox.Attendance.Workspace.Infraestructure.MongoDb.csproj", "{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veox.Attendance.Workspace.Domain", "Veox.Attendance.Workspace.Domain\Veox.Attendance.Workspace.Domain.csproj", "{EC811868-CB89-4DAB-9A77-44AE33355C5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +62,29 @@ Global
 		{18AC9330-9FE8-4AB6-BF40-ABDF5D1AFDF1}.Release|x64.Build.0 = Release|Any CPU
 		{18AC9330-9FE8-4AB6-BF40-ABDF5D1AFDF1}.Release|x86.ActiveCfg = Release|Any CPU
 		{18AC9330-9FE8-4AB6-BF40-ABDF5D1AFDF1}.Release|x86.Build.0 = Release|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Debug|x64.Build.0 = Debug|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Debug|x86.Build.0 = Debug|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Release|x64.ActiveCfg = Release|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Release|x64.Build.0 = Release|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Release|x86.ActiveCfg = Release|Any CPU
+		{2C60FD30-A2A6-48CF-9104-ED58C565DAA6}.Release|x86.Build.0 = Release|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Debug|x64.Build.0 = Debug|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Debug|x86.Build.0 = Debug|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Release|x64.ActiveCfg = Release|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Release|x64.Build.0 = Release|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Release|x86.ActiveCfg = Release|Any CPU
+		{EC811868-CB89-4DAB-9A77-44AE33355C5A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

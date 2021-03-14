@@ -1,11 +1,7 @@
-﻿#region ReSharper linter configuration.
-
-// ReSharper disable UnusedAutoPropertyAccessor.Global
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-
-#endregion
 
 using System.Collections.Generic;
 using Veox.Attendance.Workspace.Application.Exceptions;

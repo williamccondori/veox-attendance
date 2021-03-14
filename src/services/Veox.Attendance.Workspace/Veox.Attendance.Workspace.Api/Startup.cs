@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Veox.Attendance.Workspace.Api.Extensions;
+using Veox.Attendance.Workspace.Infraestructure.MongoDb;
 using Veox.Attendance.Workspace.IoC;
 
 namespace Veox.Attendance.Workspace.Api
@@ -30,7 +31,7 @@ namespace Veox.Attendance.Workspace.Api
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
+            services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
 
             services.AddControllers();
 

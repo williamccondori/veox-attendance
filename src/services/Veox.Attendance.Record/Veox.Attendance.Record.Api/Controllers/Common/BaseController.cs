@@ -22,5 +22,14 @@ namespace Veox.Attendance.Record.Api.Controllers.Common
         {
             _logger = logger;
         }
+        
+        /// <summary>
+        /// Register the log event.
+        /// </summary>
+        /// <param name="methodName">Method name.</param>
+        protected void LogTrace(string methodName)
+        {
+            _logger.LogTrace("Excecuting <{MethodName}>", methodName);
+        }
     }
 }

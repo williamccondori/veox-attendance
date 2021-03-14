@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Veox.Attendance.Workspace.Infraestructure.MongoDb\Veox.Attendance.Workspace.Infraestructure.MongoDb.csproj" />
       <ProjectReference Include="..\Veox.Attendance.Workspace.IoC\Veox.Attendance.Workspace.IoC.csproj" />
     </ItemGroup>
 

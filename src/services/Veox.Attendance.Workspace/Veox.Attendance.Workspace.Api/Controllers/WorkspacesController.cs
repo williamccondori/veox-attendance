@@ -10,7 +10,7 @@ using Veox.Attendance.Workspace.Application.Wrappers;
 namespace Veox.Attendance.Workspace.Api.Controllers
 {
     /// <summary>
-    /// Record controller.
+    /// Workspace controller.
     /// </summary>
     [ApiController]
     [Route("[controller]")]
@@ -37,7 +37,7 @@ namespace Veox.Attendance.Workspace.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<Response<List<WorkspaceResponse>>>> Get()
         {
-            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Get));
+            LogTrace(nameof(Get));
 
             var result = await _workspaceService.GetAsync();
 
@@ -53,7 +53,7 @@ namespace Veox.Attendance.Workspace.Api.Controllers
         public async Task<ActionResult<Response<WorkspaceResponse>>> Create(
             [FromBody] WorkspaceRequest workspaceRequest)
         {
-            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Create));
+            LogTrace(nameof(Create));
 
             var result = await _workspaceService.CreateAsync(workspaceRequest);
 
@@ -70,7 +70,7 @@ namespace Veox.Attendance.Workspace.Api.Controllers
         public async Task<ActionResult<WorkspaceResponse>> Update(string workspaceId,
             [FromBody] WorkspaceRequest workspaceRequest)
         {
-            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Update));
+            LogTrace(nameof(Update));
 
             var result = await _workspaceService.UpdateAsync(workspaceId, workspaceRequest);
 
