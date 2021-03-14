@@ -4,19 +4,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Veox.Attendance.Workspace.Api.Extensions;
-using Veox.Attendance.Workspace.Api.Middlewares;
 using Veox.Attendance.Workspace.IoC;
 
 namespace Veox.Attendance.Workspace.Api
 {
+    /// <summary>
+    /// Init the application.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Init the application.
+        /// </summary>
+        /// <param name="configuration">App's configuration.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
@@ -24,15 +30,17 @@ namespace Veox.Attendance.Workspace.Api
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
+
             services.AddControllers();
-            
+
             services.AddSwaggerConfiguration();
-            
+
             services.AddApiVersioningExtension();
-            
+
             services.AddHealthChecks();
 
-            ServiceConfiguration.ConfigureServices(services);
+            services.AddServiceDependency();
         }
 
         /// <summary>
@@ -45,7 +53,7 @@ namespace Veox.Attendance.Workspace.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
+
                 app.UseSwaggerSetup();
             }
 
@@ -55,9 +63,11 @@ namespace Veox.Attendance.Workspace.Api
 
             app.UseAuthorization();
             
-            app.UseMiddleware<ErrorHandlerMiddleware>();
-            
+            app.UseErrorHandler();
+
             app.UseHealthChecks("/health");
+
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

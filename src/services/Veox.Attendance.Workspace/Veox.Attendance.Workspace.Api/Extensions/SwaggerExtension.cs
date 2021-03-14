@@ -11,13 +11,12 @@ namespace Veox.Attendance.Workspace.Api.Extensions
     /// <summary>
     /// Configure swagger's options. 
     /// </summary>
-    public static class SwaggerConfig
+    public static class SwaggerExtension
     {
         /// <summary>
         /// Configure swagger's options. 
         /// </summary>
         /// <param name="services">Service collection.</param>
-        /// <exception cref="ArgumentException">Argument exception.</exception>
         public static void AddSwaggerConfiguration(this IServiceCollection services)
         {
             if (services == null)
@@ -25,21 +24,27 @@ namespace Veox.Attendance.Workspace.Api.Extensions
                 throw new ArgumentException(nameof(services));
             }
 
+            var applicationName = Assembly.GetExecutingAssembly().GetName().Name;
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Attendance Workspaces",
-                    Description = "Workspaces attendance microservice"
+                    Title = applicationName,
+                    Description = applicationName + " app swagger documentation."
                 });
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlFile = $"{applicationName}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath, true);
             });
         }
 
+        /// <summary>
+        /// Adds a swagger middleware to application.
+        /// </summary>
+        /// <param name="app">Application builder.</param>
         public static void UseSwaggerSetup(this IApplicationBuilder app)
         {
             if (app == null)
@@ -48,6 +53,7 @@ namespace Veox.Attendance.Workspace.Api.Extensions
             }
 
             app.UseSwagger();
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("v1/swagger.json", "v1");
@@ -64,13 +70,8 @@ namespace Veox.Attendance.Workspace.Api.Extensions
         {
             services.AddApiVersioning(config =>
             {
-                // Specify the default API Version as 1.0
                 config.DefaultApiVersion = new ApiVersion(1, 0);
-
-                // If the client hasn't specified the API version in the request, use the default API version number
                 config.AssumeDefaultVersionWhenUnspecified = true;
-
-                // Advertise the API versions supported for the particular endpoint
                 config.ReportApiVersions = true;
             });
         }

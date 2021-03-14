@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using FluentValidation.Results;
 
-namespace Veox.Attendance.Record.Application.Exceptions
+namespace Veox.Attendance.Workspace.Application.Exceptions
 {
     public class ApiValidationException : Exception
     {

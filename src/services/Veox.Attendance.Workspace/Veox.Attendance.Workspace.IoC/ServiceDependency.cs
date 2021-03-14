@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Veox.Attendance.Workspace.Application.Services;
 using Veox.Attendance.Workspace.Application.Services.Implementations;
+using Veox.Attendance.Workspace.Application.Services.Interfaces;
 
 namespace Veox.Attendance.Workspace.IoC
 {
-    public static class ServiceConfiguration
+    public static class ServiceDependency
     {
-        public static void ConfigureServices(IServiceCollection services)
+        public static void AddServiceDependency(this IServiceCollection services)
         {
             services.AddScoped<IWorkspaceService, WorkspaceService>();
         }

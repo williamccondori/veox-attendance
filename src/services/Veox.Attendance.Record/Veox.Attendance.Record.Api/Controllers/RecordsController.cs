@@ -39,7 +39,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         public async Task<ActionResult<Response<SummaryEmployeeResponse>>> Create(
             [FromBody] RecordCreateRequest recordCreateRequest)
         {
-            _logger.LogTrace($"Excecuting <{nameof(Create)}>");
+            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Create));
 
             var result = await _recordService.CreateAsync(recordCreateRequest);
 
@@ -55,7 +55,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         public async Task<ActionResult<Response<SummaryEmployeeResponse>>> GetSummaryByEmployee(
             [FromQuery] SummaryEmployeeRequest summaryEmployeeRequest)
         {
-            _logger.LogTrace($"Excecuting <{nameof(GetSummaryByEmployee)}>");
+            _logger.LogTrace("Excecuting <{MethodName}>", nameof(GetSummaryByEmployee));
 
             var result = await _recordService.GetSummaryByEmployeeAsync(summaryEmployeeRequest);
 
@@ -71,7 +71,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         public async Task<ActionResult<Response<List<DailySummaryResponse>>>> GetDailySummary(
             [FromQuery] DailySummaryRequest dailySummaryRequest)
         {
-            _logger.LogTrace($"Excecuting <{nameof(GetDailySummary)}>");
+            _logger.LogTrace("Excecuting <{MethodName}>", nameof(GetDailySummary));
 
             var result = await _recordService.GetDailySummaryAsync(dailySummaryRequest);
 

@@ -1,10 +1,9 @@
 ﻿namespace Veox.Attendance.Workspace.Application.Models
 {
-    public class WorkspaceResponse
+    public class WorkspaceRequest
     {
-        public string Id { get; set; }
         public string Name { get; set; }
+        public string Identifier { get; set; }
         public string Description { get; set; }
-        public string ImagePath { get; set; }
     }
 }

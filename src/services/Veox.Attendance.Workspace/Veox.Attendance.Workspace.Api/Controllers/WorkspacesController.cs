@@ -1,74 +1,97 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Veox.Attendance.Workspace.Api.Controllers.Common;
 using Veox.Attendance.Workspace.Application.Models;
-using Veox.Attendance.Workspace.Application.Services;
+using Veox.Attendance.Workspace.Application.Services.Interfaces;
 using Veox.Attendance.Workspace.Application.Wrappers;
 
 namespace Veox.Attendance.Workspace.Api.Controllers
 {
+    /// <summary>
+    /// Record controller.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class WorkspacesController : ControllerBase
+    public class WorkspacesController : BaseController<WorkspacesController>
     {
         private readonly IWorkspaceService _workspaceService;
 
-        public WorkspacesController(IWorkspaceService workspaceService)
+        /// <summary>
+        /// Record controller.
+        /// </summary>
+        /// <param name="workspaceService">Workspace service.</param>
+        /// <param name="logger">Logger service.</param>
+        public WorkspacesController(
+            IWorkspaceService workspaceService,
+            ILogger<WorkspacesController> logger) : base(logger)
         {
             _workspaceService = workspaceService;
         }
-        
+
         /// <summary>
-        /// Get all workspaces.
+        /// Get all workspaces of current user.
         /// </summary>
         /// <returns>List of workspaces of current user.</returns>
         [HttpGet]
-        public async Task<ActionResult<Response<IEnumerable<WorkspaceResponse>>>> GetByUser()
+        public async Task<ActionResult<Response<List<WorkspaceResponse>>>> Get()
         {
-            var response = await _workspaceService.GetByUserAsync();
+            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Get));
 
-            return Ok(response);
+            var result = await _workspaceService.GetAsync();
+
+            return Ok(new Response<List<WorkspaceResponse>>(result));
         }
 
         /// <summary>
-        /// Create a new workspace.
+        /// Add a new workspace.
         /// </summary>
-        /// <param name="workspace"> Workspace model.</param>
-        /// <returns>Workspace model created.</returns>
+        /// <param name="workspaceRequest">Workspace request model.</param>
+        /// <returns>Workspace created response model.</returns>
         [HttpPost]
-        public async Task<ActionResult<Response<WorkspaceResponse>>> Create([FromBody] WorkspaceModel workspace)
+        public async Task<ActionResult<Response<WorkspaceResponse>>> Create(
+            [FromBody] WorkspaceRequest workspaceRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var response = await _workspaceService.CreateAsync(workspace);
+            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Create));
 
-            return Created(nameof(Create), response);
+            var result = await _workspaceService.CreateAsync(workspaceRequest);
+
+            return Created(nameof(Create), new Response<WorkspaceResponse>(result));
         }
 
         /// <summary>
-        /// Update a existing workspace.
+        /// Update an existing workspace.
         /// </summary>
-        /// <param name="id">Workspace ID.</param>
-        /// <param name="workspace">Workspace model.</param>
-        /// <returns>Workspace model updated.</returns>
-        [HttpPut("{id}")]
-        public async Task<ActionResult<WorkspaceResponse>> Update(Guid id, [FromBody] WorkspaceModel workspace)
+        /// <param name="workspaceId">Workspace ID.</param>
+        /// <param name="workspaceRequest">Workspace request model.</param>
+        /// <returns>Workspace updated response model.</returns>
+        [HttpPut("{workspaceId}")]
+        public async Task<ActionResult<WorkspaceResponse>> Update(string workspaceId,
+            [FromBody] WorkspaceRequest workspaceRequest)
         {
-            if (Guid.Empty == id)
-                return NotFound();
-            
-            if (ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Update));
 
-            var response = await _workspaceService.UpdateAsync(workspace);
+            var result = await _workspaceService.UpdateAsync(workspaceId, workspaceRequest);
 
-            return Ok(response);
+            return Ok(new Response<WorkspaceResponse>(result));
+        }
+
+        /// <summary>
+        /// Send a invitation to new employee.
+        /// </summary>
+        /// <param name="workspaceId">Workspace ID.</param>
+        /// <param name="employeeRequest">Employee request model.</param>
+        /// <returns>Employee response model.</returns>
+        [HttpPost("{workspaceId}/employees")]
+        public async Task<ActionResult<EmployeeResponse>> AddEmployee(string workspaceId,
+            EmployeeRequest employeeRequest)
+        {
+            LogTrace(nameof(AddEmployee));
+
+            var result = await _workspaceService.AddEmployeeAsync(workspaceId, employeeRequest);
+
+            return Ok(new Response<EmployeeResponse>(result));
         }
     }
 }

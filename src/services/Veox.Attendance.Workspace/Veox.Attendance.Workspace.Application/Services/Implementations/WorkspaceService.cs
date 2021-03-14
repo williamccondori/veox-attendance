@@ -2,31 +2,36 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Veox.Attendance.Workspace.Application.Models;
-using Veox.Attendance.Workspace.Application.Wrappers;
+using Veox.Attendance.Workspace.Application.Services.Implementations.Common;
+using Veox.Attendance.Workspace.Application.Services.Interfaces;
 
 namespace Veox.Attendance.Workspace.Application.Services.Implementations
 {
-    public class WorkspaceService : IWorkspaceService
+    public class WorkspaceService : BaseService, IWorkspaceService
     {
-        public async Task<Response<IEnumerable<WorkspaceResponse>>> GetByUserAsync()
+        public Task<List<WorkspaceResponse>> GetAsync()
         {
-            var workspaces = new List<WorkspaceResponse>
+            return Task.FromResult(new List<WorkspaceResponse>()
             {
-                new WorkspaceResponse {Id = Guid.NewGuid(), Name = "Veox", Description = "Veox", Image = "image.png"},
-                new WorkspaceResponse {Id = Guid.NewGuid(), Name = "Neax", Description = "Neax", Image = "image.png"}
-            };
-
-            var response = new Response<IEnumerable<WorkspaceResponse>>(workspaces);
-            
-            return await Task.FromResult(response);
+                new WorkspaceResponse()
+                {
+                    Id = "",
+                    ImagePath = "https://dummyimage.com/300x300/000/fff/&text=+VE+",
+                }
+            });
         }
 
-        public Task<Response<WorkspaceResponse>> CreateAsync(WorkspaceModel workspace)
+        public Task<WorkspaceResponse> CreateAsync(WorkspaceRequest workspaceRequest)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Response<WorkspaceResponse>> UpdateAsync(WorkspaceModel workspace)
+        public Task<WorkspaceResponse> UpdateAsync(string workspaceId, WorkspaceRequest workspaceRequest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<EmployeeResponse> AddEmployeeAsync(string workspaceId, EmployeeRequest employeeRequest)
         {
             throw new NotImplementedException();
         }
