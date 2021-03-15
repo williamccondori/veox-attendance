@@ -6,6 +6,7 @@ using Veox.Attendance.Identity.Application.Services.Interfaces;
 using Veox.Attendance.Identity.Domain.Entities;
 using Veox.Attendance.Identity.Domain.Repositories;
 using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models;
+using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models.Common;
 using Veox.Attendance.Identity.Infraestructure.RabbitMq.Producers.Interfaces;
 
 namespace Veox.Attendance.Identity.Application.Services.Implementations
@@ -32,7 +33,7 @@ namespace Veox.Attendance.Identity.Application.Services.Implementations
 
             if (existingUser != null)
             {
-                throw new ApiException("Ya se ha registrado un usuario con este correo");
+                throw new ApiException("A user has already registered with this email");
             }
 
             var passwordKey = EncryptorHelper.GetPasswordKey();
@@ -50,6 +51,7 @@ namespace Veox.Attendance.Identity.Application.Services.Implementations
             var activationCodeEmail = new ActivationCodeEmail
             {
                 Email = newUser.Email,
+                EmailType = EmailType.ActivationCode,
                 ActivationCode = newActivationCode.Code,
                 FullName = newUser.FullName
             };
@@ -60,7 +62,7 @@ namespace Veox.Attendance.Identity.Application.Services.Implementations
             {
                 Name = newUser.Name,
                 LastName = newUser.LastName,
-                FullName = string.Empty,
+                FullName = newUser.FullName,
                 Email = newUser.Email
             };
         }

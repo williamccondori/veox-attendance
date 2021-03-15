@@ -1,5 +1,6 @@
 ﻿// ReSharper disable ConvertToUsingDeclaration
 
+using System;
 using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
@@ -11,7 +12,7 @@ namespace Veox.Attendance.Identity.Infraestructure.RabbitMq.Producers.Implementa
 {
     public class EmailProducer : IEmailProducer
     {
-        private const string QueueName = "email--send-activation-code";
+        private const string QueueName = "attendante--email-generator";
 
         private readonly IConnection _connection;
 

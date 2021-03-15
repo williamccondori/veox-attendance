@@ -35,6 +35,8 @@ namespace Veox.Attendance.Identity.Api
             services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
             services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMq"));
 
+            services.AddRabbitMq();
+
             services.AddControllers();
 
             services.AddSwaggerConfiguration();
@@ -42,9 +44,7 @@ namespace Veox.Attendance.Identity.Api
             services.AddApiVersioningExtension();
 
             services.AddHealthChecks();
-
-            services.AddRabbitMq();
-
+            
             services.AddServiceDependency();
         }
 
@@ -59,7 +59,7 @@ namespace Veox.Attendance.Identity.Api
             {
                 app.UseDeveloperExceptionPage();
 
-                //app.UseSwaggerSetup();
+                app.UseSwaggerSetup();
             }
 
             app.UseHttpsRedirection();
@@ -68,7 +68,7 @@ namespace Veox.Attendance.Identity.Api
 
             app.UseAuthorization();
 
-            //app.UseErrorHandler();
+            app.UseErrorHandler();
 
             app.UseHealthChecks("/health");
 

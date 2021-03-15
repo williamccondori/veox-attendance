@@ -31,6 +31,13 @@ namespace Veox.Attendance.Identity.Infraestructure.MongoDb.Contexts.Implementati
                 cm.MapAuditableFields();
                 cm.AutoMap();
             });
+            
+            BsonClassMap.RegisterClassMap<ActivationCodeEntity>(cm =>
+            {
+                cm.MapId();
+                cm.MapAuditableFields();
+                cm.AutoMap();
+            });
         }
         public IMongoCollection<UserEntity> Users => _database.GetCollection<UserEntity>("users");
         public IMongoCollection<ActivationCodeEntity> ActivationCodes => _database.GetCollection<ActivationCodeEntity>("activation_codes");

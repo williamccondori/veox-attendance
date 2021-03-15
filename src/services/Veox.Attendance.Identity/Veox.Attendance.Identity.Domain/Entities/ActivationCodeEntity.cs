@@ -15,6 +15,9 @@ namespace Veox.Attendance.Identity.Domain.Entities
         public string UpdatedBy { get; private set; }
         public DateTime UpdatedDate { get; private set; }
         public string UserId { get; set; }
+        public bool IsEnabled { get; set; }
+        public DateTime CreationDay { get; private set; }
+        public DateTime ExpirationDay { get; private set; }
         public string Code { get; private set; }
 
         public static ActivationCodeEntity Create(string userId, string code)
@@ -22,7 +25,10 @@ namespace Veox.Attendance.Identity.Domain.Entities
             return new ActivationCodeEntity
             {
                 UserId = userId,
+                IsEnabled = true,
                 Code = code,
+                CreationDay = DateTime.Now,
+                ExpirationDay = DateTime.Now.AddHours(1),
                 IsActive = true,
                 CreatedBy = userId,
                 CreatedDate = DateTime.Now

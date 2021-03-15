@@ -19,6 +19,7 @@ namespace Veox.Attendance.Identity.IoC
             services.AddScoped<IEmailProducer, EmailProducer>();
             
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICodeRepository, CodeRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();

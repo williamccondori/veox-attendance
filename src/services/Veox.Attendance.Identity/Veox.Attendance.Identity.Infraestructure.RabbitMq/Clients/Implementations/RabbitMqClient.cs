@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Veox.Attendance.Identity.Infraestructure.RabbitMq.Clients.Interfaces;
 
@@ -16,25 +15,16 @@ namespace Veox.Attendance.Identity.Infraestructure.RabbitMq.Clients.Implementati
 
         public IConnection Connect()
         {
-            IConnection connection;
-            
-            try
+            var connectionFactory = new ConnectionFactory
             {
-                var connectionFactory = new ConnectionFactory
-                {
-                    HostName = _options.Hostname,
-                    Port = AmqpTcpEndpoint.UseDefaultPort,
-                    UserName = _options.Username,
-                    Password = _options.Password,
-                    VirtualHost = _options.VHost
-                };
+                HostName = _options.Hostname,
+                Port = AmqpTcpEndpoint.UseDefaultPort,
+                UserName = _options.Username,
+                Password = _options.Password,
+                VirtualHost = _options.VHost
+            };
 
-                connection = connectionFactory.CreateConnection();
-            }
-            catch (Exception)
-            {
-                connection = null;
-            }
+            var connection = connectionFactory.CreateConnection();
 
             return connection;
         }
