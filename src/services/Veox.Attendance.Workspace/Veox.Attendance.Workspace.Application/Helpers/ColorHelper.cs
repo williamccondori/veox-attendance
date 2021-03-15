@@ -9,7 +9,7 @@ namespace Veox.Attendance.Workspace.Application.Helpers
         {
             var random = new Random();
 
-            var color = Color.FromArgb(random.Next(100), random.Next(100), random.Next(100));
+            var color = Color.FromArgb(random.Next(150), random.Next(150), random.Next(150));
 
             return color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
         }

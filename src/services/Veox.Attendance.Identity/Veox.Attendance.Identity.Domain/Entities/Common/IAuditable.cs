@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Veox.Attendance.Workspace.Domain.Entities.Common
+namespace Veox.Attendance.Identity.Domain.Entities.Common
 {
     public interface IAuditable
     {

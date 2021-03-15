@@ -1,7 +1,7 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace Veox.Attendance.Workspace.Infraestructure.MongoDb
+namespace Veox.Attendance.Identity.Infraestructure.MongoDb
 {
     public class MongoDbOptions
     {

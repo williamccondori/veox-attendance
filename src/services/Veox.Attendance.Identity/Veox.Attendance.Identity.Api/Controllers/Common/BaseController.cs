@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Veox.Attendance.Workspace.Api.Controllers.Common
+namespace Veox.Attendance.Identity.Api.Controllers.Common
 {
     /// <summary>
     /// Base controller.

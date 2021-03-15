@@ -26,8 +26,7 @@ namespace Veox.Attendance.Workspace.Infraestructure.MongoDb.Repositories
 
         public async Task<IEnumerable<WorkspaceEntity>> GetByEmployee(string employeeId)
         {
-            var cursor = await _context.Workspaces.FindAsync(x =>
-                x.IsActive && x.Id.Equals(employeeId));
+            var cursor = await _context.Workspaces.FindAsync(x => x.IsActive);
 
             return await cursor.ToListAsync();
         }

@@ -1,11 +1,12 @@
 ﻿// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable CollectionNeverQueried.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 using System;
 using System.Collections.Generic;
 using FluentValidation.Results;
 
-namespace Veox.Attendance.Workspace.Application.Exceptions
+namespace Veox.Attendance.Identity.Application.Exceptions
 {
     public class ApiValidationException : Exception
     {
