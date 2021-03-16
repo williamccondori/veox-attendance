@@ -1,18 +1,16 @@
-﻿// ReSharper disable ConvertToUsingDeclaration
-
-using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
 using Veox.Attendance.Identity.Infraestructure.RabbitMq.Clients.Interfaces;
-using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models;
+using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models.EmailGenerator;
 using Veox.Attendance.Identity.Infraestructure.RabbitMq.Producers.Interfaces;
 
+// ReSharper disable ConvertToUsingDeclaration
 namespace Veox.Attendance.Identity.Infraestructure.RabbitMq.Producers.Implementations
 {
     public class EmailProducer : IEmailProducer
     {
-        private const string QueueName = "attendante--email-generator";
+        private const string QueueName = "attendance--email-generator";
 
         private readonly IConnection _connection;
 

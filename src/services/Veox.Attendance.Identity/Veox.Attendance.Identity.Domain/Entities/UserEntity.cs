@@ -14,25 +14,21 @@ namespace Veox.Attendance.Identity.Domain.Entities
         public DateTime CreatedDate { get; private set; }
         public string UpdatedBy { get; private set; }
         public DateTime UpdatedDate { get; private set; }
-        public string Name { get; set; }
-        public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string PasswordKey { get; set; }
         public bool IsEnabled { get; set; }
-        public string FullName => $"{Name} {LastName}";
+        public bool IsVerified { get; set; }
 
-        public static UserEntity Create(string name, string lastName, string email, string password, string passwordKey,
-            bool isEnabled = false)
+        public static UserEntity Create(string email, string password, string passwordKey, bool isEnabled = true)
         {
             return new UserEntity
             {
-                Name = name,
-                LastName = lastName,
                 Email = email,
                 Password = password,
                 PasswordKey = passwordKey,
                 IsEnabled = isEnabled,
+                IsVerified = true,
                 IsActive = true,
                 CreatedBy = string.Empty,
                 CreatedDate = DateTime.Now

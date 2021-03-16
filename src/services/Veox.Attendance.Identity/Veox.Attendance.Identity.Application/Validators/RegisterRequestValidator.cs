@@ -7,7 +7,9 @@ namespace Veox.Attendance.Identity.Application.Validators
     {
         public RegisterRequestValidator()
         {
-            
+            RuleFor(x => x.Email)
+                .NotNull()
+                .EmailAddress();
         }
     }
 }

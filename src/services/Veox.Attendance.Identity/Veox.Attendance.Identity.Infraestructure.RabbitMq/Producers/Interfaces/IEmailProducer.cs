@@ -1,4 +1,4 @@
-﻿using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models;
+﻿using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models.EmailGenerator;
 
 namespace Veox.Attendance.Identity.Infraestructure.RabbitMq.Producers.Interfaces
 {

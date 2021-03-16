@@ -3,33 +3,33 @@ using Veox.Attendance.Identity.Application.Exceptions;
 using Veox.Attendance.Identity.Application.Helpers;
 using Veox.Attendance.Identity.Application.Models;
 using Veox.Attendance.Identity.Application.Services.Interfaces;
+using Veox.Attendance.Identity.Application.Services.Interfaces.Common;
+using Veox.Attendance.Identity.Application.Validators;
 using Veox.Attendance.Identity.Domain.Entities;
 using Veox.Attendance.Identity.Domain.Repositories;
-using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models;
-using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models.Common;
+using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models.User;
 using Veox.Attendance.Identity.Infraestructure.RabbitMq.Producers.Interfaces;
 
 namespace Veox.Attendance.Identity.Application.Services.Implementations
 {
-    public class UserService : IUserService
+    public class UserService : BaseService, IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly ICodeRepository _codeRepository;
-        private readonly IEmailProducer _emailProducer;
+        private readonly IUserProducer _userProducer;
 
         public UserService(
-            ICodeRepository codeRepository,
             IUserRepository userRepository,
-            IEmailProducer emailProducer)
+            IUserProducer userProducer)
         {
             _userRepository = userRepository;
-            _codeRepository = codeRepository;
-            _emailProducer = emailProducer;
+            _userProducer = userProducer;
         }
 
-        public async Task<RegisterResponse> RegisterAsync(RegisterRequest authRegister)
+        public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
         {
-            var existingUser = await _userRepository.GetByEmail(authRegister.Email);
+            Validate(new RegisterRequestValidator(), registerRequest);
+
+            var existingUser = await _userRepository.GetByEmail(registerRequest.Email);
 
             if (existingUser != null)
             {
@@ -37,32 +37,40 @@ namespace Veox.Attendance.Identity.Application.Services.Implementations
             }
 
             var passwordKey = EncryptorHelper.GetPasswordKey();
-            var password = EncryptorHelper.GetHash(authRegister.Password, passwordKey);
+            var password = EncryptorHelper.GetHash(registerRequest.Password, passwordKey);
 
-            var userEntity = UserEntity
-                .Create(authRegister.Name, authRegister.LastName, authRegister.Email, password, passwordKey);
+            var userEntity = UserEntity.Create(registerRequest.Email, password, passwordKey);
             var newUser = await _userRepository.Create(userEntity);
 
-            var code = RandomHelper.GenerateActivationCode();
-            var activationCode = ActivationCodeEntity.Create(newUser.Id, code);
+            #region Not implemented code.
 
-            var newActivationCode = await _codeRepository.Create(activationCode);
+            // Creation of activation code [Not implement in this version].
+            // var code = RandomHelper.GenerateActivationCode();
+            // var activationCode = ActivationCodeEntity.Create(newUser.Id, code);
+            //
+            // var newActivationCode = await _codeRepository.Create(activationCode);
+            //
+            // var activationCodeEmail = new ActivationCodeEmail
+            // {
+            //     Email = newUser.Email,
+            //     EmailType = EmailType.ActivationCode,
+            //     ActivationCode = newActivationCode.Code,
+            //     FullName = newUser.FullName
+            // };
+            // _emailProducer.SendActivationCode(activationCodeEmail);
 
-            var activationCodeEmail = new ActivationCodeEmail
+            #endregion
+
+            _userProducer.Save(new SaveUserRequest
             {
+                Id = newUser.Id,
                 Email = newUser.Email,
-                EmailType = EmailType.ActivationCode,
-                ActivationCode = newActivationCode.Code,
-                FullName = newUser.FullName
-            };
-
-            _emailProducer.SendActivationCode(activationCodeEmail);
+                Name = registerRequest.Name,
+                LastName = registerRequest.LastName
+            });
 
             return new RegisterResponse
             {
-                Name = newUser.Name,
-                LastName = newUser.LastName,
-                FullName = newUser.FullName,
                 Email = newUser.Email
             };
         }

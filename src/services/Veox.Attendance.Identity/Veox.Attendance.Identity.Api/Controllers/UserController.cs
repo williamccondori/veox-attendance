@@ -30,19 +30,18 @@ namespace Veox.Attendance.Identity.Api.Controllers
         }
 
         /// <summary>
-        /// Add a new user.
+        /// Register a new user.
         /// </summary>
-        /// <param name="registerRequest">User request model.</param>
-        /// <returns>User created response model.</returns>
+        /// <param name="registerRequest">Register request model.</param>
+        /// <returns>Register response model.</returns>
         [HttpPost]
-        public async Task<ActionResult<Response<RegisterResponse>>> Create(
-            [FromBody] RegisterRequest registerRequest)
+        public async Task<ActionResult<Response<RegisterResponse>>> Register(RegisterRequest registerRequest)
         {
-            LogTrace(nameof(Create));
-
+            LogTrace(nameof(Register));
+            
             var result = await _userService.RegisterAsync(registerRequest);
-
-            return Created(nameof(Create), new Response<RegisterResponse>(result));
+            
+            return Created(nameof(Register), result);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Veox.Attendance.Identity.Infraestructure.RabbitMq.Models.Common;
 
-namespace Veox.Attendance.Identity.Infraestructure.RabbitMq.Models
+namespace Veox.Attendance.Identity.Infraestructure.RabbitMq.Models.EmailGenerator
 {
     public class ActivationCodeEmail : IEmailGeneratorrModel
     {

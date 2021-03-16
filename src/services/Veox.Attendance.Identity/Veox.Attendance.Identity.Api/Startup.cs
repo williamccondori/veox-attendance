@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Veox.Attendance.Identity.Api.Extensions;
+using Veox.Attendance.Identity.Infraestructure.Jwt;
 using Veox.Attendance.Identity.Infraestructure.MongoDb;
 using Veox.Attendance.Identity.Infraestructure.RabbitMq;
 using Veox.Attendance.Identity.IoC;
@@ -34,6 +35,7 @@ namespace Veox.Attendance.Identity.Api
         {
             services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
             services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMq"));
+            services.Configure<JwtOptions>(Configuration.GetSection("Jwt"));
 
             services.AddRabbitMq();
 

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UserSecretsId>dotnet-Veox.Attendance.User.Worker-E16CDDBF-76C0-4E84-8E26-716841B0F98A</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Veox.Attendance.User.IoC\Veox.Attendance.User.IoC.csproj" />
+    </ItemGroup>
+</Project>
