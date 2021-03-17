@@ -55,4 +55,6 @@ services:
       dockerfile: Dockerfile
     image: attendance-api:latest
     container_name: attendance-api
+    ports: 
+      - 8000:80
     restart: always
