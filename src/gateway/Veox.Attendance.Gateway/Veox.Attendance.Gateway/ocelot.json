@@ -3,15 +3,15 @@
     {
       "DownstreamPathTemplate": "/user",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "attendance-user",
-          "Port": 80
-        }
-      ],
+      "ServiceName": "attendance-user",
       "UpstreamPathTemplate": "/api/users",
       "UpstreamHttpMethod": ["Get"]
     }
   ],
-  "GlobalConfiguration": {}
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Host": "attendance-service-discovery",
+      "Port": 8500
+    }
+  }
 }

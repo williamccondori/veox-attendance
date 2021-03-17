@@ -55,6 +55,18 @@ services:
       dockerfile: Dockerfile
     image: attendance-api:latest
     container_name: attendance-api
-    ports: 
+    ports:
       - 8000:80
     restart: always
+
+  # Service discovery
+
+  attendance-service-discovery:
+    image: consul:latest
+    container_name: attendance-service-discovery
+    command: consul agent -dev -log-level=warn -ui -client=0.0.0.0
+    hostname: attendance-service-discovery
+    expose:
+      - 8500
+    ports:
+      - 8500:8500
