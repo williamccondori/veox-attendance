@@ -1,8 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
 WORKDIR /app
 
-COPY *.sln ./
-
 COPY Veox.Attendance.Identity.Api/*.csproj Veox.Attendance.Identity.Api/
 COPY Veox.Attendance.Identity.Application/*.csproj Veox.Attendance.Identity.Application/
 COPY Veox.Attendance.Identity.Domain/*.csproj Veox.Attendance.Identity.Domain/
@@ -11,7 +9,7 @@ COPY Veox.Attendance.Identity.Infraestructure.MongoDb/*.csproj Veox.Attendance.I
 COPY Veox.Attendance.Identity.Infraestructure.RabbitMq/*.csproj Veox.Attendance.Identity.Infraestructure.RabbitMq/
 COPY Veox.Attendance.Identity.IoC/*.csproj Veox.Attendance.Identity.IoC/
 
-RUN dotnet restore
+RUN dotnet restore Veox.Attendance.Identity.Api
 
 COPY . ./
 RUN dotnet publish ./Veox.Attendance.Identity.Api/Veox.Attendance.Identity.Api.csproj -c Release -o out --no-restore
