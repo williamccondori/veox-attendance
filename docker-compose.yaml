@@ -13,6 +13,15 @@ services:
   #     MONGO_INITDB_ROOT_USERNAME: root
   #     MONGO_INITDB_ROOT_PASSWORD: ficticio
 
+  # Service discovery
+
+  attendance-service-discovery:
+    image: consul:latest
+    container_name: attendance-service-discovery
+    command: consul agent -dev -log-level=warn -ui -client=0.0.0.0
+    ports:
+      - 8500:8500
+
   # Microservicces
 
   attendance-identity:
@@ -37,7 +46,7 @@ services:
       dockerfile: Dockerfile
     image: attendance-user:latest
     container_name: attendance-user
-    restart: always
+    # restart: always
 
   attendance-workspace:
     build:
@@ -58,15 +67,3 @@ services:
     ports:
       - 8000:80
     restart: always
-
-  # Service discovery
-
-  attendance-service-discovery:
-    image: consul:latest
-    container_name: attendance-service-discovery
-    command: consul agent -dev -log-level=warn -ui -client=0.0.0.0
-    hostname: attendance-service-discovery
-    expose:
-      - 8500
-    ports:
-      - 8500:8500

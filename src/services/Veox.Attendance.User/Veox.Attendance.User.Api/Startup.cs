@@ -1,4 +1,6 @@
+using System;
 using System.Text;
+using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +12,8 @@ using Veox.Attendance.User.Api.Attributes;
 using Veox.Attendance.User.Api.Extensions;
 using Veox.Attendance.User.Infraestructure.MongoDb;
 using Veox.Attendance.User.IoC;
+
+// ReSharper disable ConvertToUsingDeclaration
 
 namespace Veox.Attendance.User.Api
 {
@@ -73,6 +77,16 @@ namespace Veox.Attendance.User.Api
 
             services.AddHealthChecks();
 
+            services.AddSingleton<IConsulClient>(p => new ConsulClient(o =>
+            {
+                var hostName = Configuration["Consul:ConsulUri"];
+
+                if (!string.IsNullOrEmpty(hostName))
+                {
+                    o.Address = new Uri(hostName);
+                }
+            }));
+
             services.AddServiceDependency();
         }
 
@@ -103,6 +117,38 @@ namespace Veox.Attendance.User.Api
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseHealthChecks("/health");
+
+            ConfigureConsul(app);
+        }
+
+        private void ConfigureConsul(IApplicationBuilder app)
+        {
+            var serviceName = Configuration["Consul:ServiceName"];
+            var serviceUri = Configuration["Consul:ServiceUri"];
+
+            var service = new Uri(serviceUri);
+            var client = app.ApplicationServices.GetRequiredService<IConsulClient>();
+
+            var serviceId = Guid.NewGuid();
+            var consulServiceId = $"{serviceName}:{serviceId}";
+
+            var serviceRegistration = new AgentServiceRegistration
+            {
+                ID = consulServiceId,
+                Address = service.Host,
+                Port = service.Port,
+                Name = serviceName,
+                Check = new AgentCheckRegistration
+                {
+                    HTTP = $"{serviceUri}/health",
+                    Notes = $"Checks {serviceUri}/health on {service.Host}:[{service.Port}]",
+                    Timeout = TimeSpan.FromSeconds(5),
+                    Interval = TimeSpan.FromSeconds(30),
+                    DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(60)
+                }
+            };
+
+            client.Agent.ServiceRegister(serviceRegistration).GetAwaiter().GetResult();
         }
     }
 }
