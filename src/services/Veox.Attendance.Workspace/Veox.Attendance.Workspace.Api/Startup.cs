@@ -1,4 +1,6 @@
+using System;
 using System.Text;
+using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,6 +75,16 @@ namespace Veox.Attendance.Workspace.Api
 
             services.AddHealthChecks();
 
+            services.AddSingleton<IConsulClient>(p => new ConsulClient(o =>
+            {
+                var hostName = Configuration["Consul:ConsulUri"];
+
+                if (!string.IsNullOrEmpty(hostName))
+                {
+                    o.Address = new Uri(hostName);
+                }
+            }));
+
             services.AddServiceDependency();
         }
 
@@ -103,6 +115,10 @@ namespace Veox.Attendance.Workspace.Api
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseHealthChecks("/health");
+
+            var serviceName = Configuration["Consul:ServiceName"];
+            var serviceUri = Configuration["Consul:ServiceUri"];
+            app.UseConsul(serviceName, serviceUri);
         }
     }
 }

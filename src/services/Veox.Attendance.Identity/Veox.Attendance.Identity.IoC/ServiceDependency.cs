@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Veox.Attendance.Identity.Application.Contexts.Implementations;
+using Veox.Attendance.Identity.Application.Contexts.Interfaces;
 using Veox.Attendance.Identity.Application.Services.Implementations;
 using Veox.Attendance.Identity.Application.Services.Interfaces;
 using Veox.Attendance.Identity.Domain.Repositories;
@@ -16,7 +18,10 @@ namespace Veox.Attendance.Identity.IoC
     {
         public static void AddServiceDependency(this IServiceCollection services)
         {
-            services.AddSingleton<IMongoDbContext, MongoDbContext>();
+            // Contexts.
+            services.AddSingleton<IMongoDbContext, MongoDbContext>();            
+            services.AddScoped<ApplicationContext>();
+            services.AddScoped<IApplicationContext>(x => x.GetRequiredService<ApplicationContext>());
             
             services.AddScoped<IJwtBuilder, JwtBuilder>();
 

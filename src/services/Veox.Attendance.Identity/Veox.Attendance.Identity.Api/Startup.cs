@@ -1,8 +1,14 @@
+using System;
+using System.Text;
+using Consul;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Veox.Attendance.Identity.Api.Attributes;
 using Veox.Attendance.Identity.Api.Extensions;
 using Veox.Attendance.Identity.Infraestructure.Jwt;
 using Veox.Attendance.Identity.Infraestructure.MongoDb;
@@ -33,20 +39,56 @@ namespace Veox.Attendance.Identity.Api
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(GenerateSessionAttribute));
+                options.Filters.Add(typeof(ErrorHandlerAttribute));
+                options.EnableEndpointRouting = false;
+            });
+
+            services.AddControllers();
+            
             services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
             services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMq"));
             services.Configure<JwtOptions>(Configuration.GetSection("Jwt"));
 
-            services.AddRabbitMq();
+            var securityKey = Encoding.ASCII.GetBytes(Configuration["Jwt:SecretId"]);
 
-            services.AddControllers();
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(securityKey),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             services.AddSwaggerConfiguration();
 
             services.AddApiVersioningExtension();
 
             services.AddHealthChecks();
-            
+
+            services.AddSingleton<IConsulClient>(p => new ConsulClient(o =>
+            {
+                var hostName = Configuration["Consul:ConsulUri"];
+
+                if (!string.IsNullOrEmpty(hostName))
+                {
+                    o.Address = new Uri(hostName);
+                }
+            }));
+
             services.AddServiceDependency();
         }
 
@@ -68,15 +110,19 @@ namespace Veox.Attendance.Identity.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
-
-            app.UseErrorHandler();
-
-            app.UseHealthChecks("/health");
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            app.UseHealthChecks("/health");
+
+            var serviceName = Configuration["Consul:ServiceName"];
+            var serviceUri = Configuration["Consul:ServiceUri"];
+            app.UseConsul(serviceName, serviceUri);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Veox.Attendance.Workspace.Api.Controllers.Common;
 using Veox.Attendance.Workspace.Application.Models;
 using Veox.Attendance.Workspace.Application.Services.Interfaces;
 using Veox.Attendance.Workspace.Application.Wrappers;
@@ -14,19 +13,21 @@ namespace Veox.Attendance.Workspace.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class WorkspacesController : BaseController<WorkspacesController>
+    public class WorkspaceController : ControllerBase
     {
+        private readonly ILogger<WorkspaceController> _logger;
         private readonly IWorkspaceService _workspaceService;
 
         /// <summary>
         /// Record controller.
         /// </summary>
-        /// <param name="workspaceService">Workspace service.</param>
         /// <param name="logger">Logger service.</param>
-        public WorkspacesController(
-            IWorkspaceService workspaceService,
-            ILogger<WorkspacesController> logger) : base(logger)
+        /// <param name="workspaceService">Workspace service.</param>
+        public WorkspaceController(
+            ILogger<WorkspaceController> logger,
+            IWorkspaceService workspaceService)
         {
+            _logger = logger;
             _workspaceService = workspaceService;
         }
 
@@ -37,7 +38,7 @@ namespace Veox.Attendance.Workspace.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<Response<List<WorkspaceResponse>>>> Get()
         {
-            LogTrace(nameof(Get));
+            _logger.LogTrace(@"Executing: {Method}", nameof(Get));
 
             var result = await _workspaceService.GetAsync();
 
@@ -53,7 +54,7 @@ namespace Veox.Attendance.Workspace.Api.Controllers
         public async Task<ActionResult<Response<WorkspaceResponse>>> Create(
             [FromBody] WorkspaceRequest workspaceRequest)
         {
-            LogTrace(nameof(Create));
+            _logger.LogTrace(@"Executing: {Method}", nameof(Create));
 
             var result = await _workspaceService.CreateAsync(workspaceRequest);
 
@@ -70,7 +71,7 @@ namespace Veox.Attendance.Workspace.Api.Controllers
         public async Task<ActionResult<WorkspaceResponse>> Update(string workspaceId,
             [FromBody] WorkspaceRequest workspaceRequest)
         {
-            LogTrace(nameof(Update));
+            _logger.LogTrace(@"Executing: {Method}", nameof(Update));
 
             var result = await _workspaceService.UpdateAsync(workspaceId, workspaceRequest);
 
@@ -87,7 +88,7 @@ namespace Veox.Attendance.Workspace.Api.Controllers
         public async Task<ActionResult<EmployeeResponse>> AddEmployee(string workspaceId,
             EmployeeRequest employeeRequest)
         {
-            LogTrace(nameof(AddEmployee));
+            _logger.LogTrace(@"Executing: {Method}", nameof(AddEmployee));
 
             var result = await _workspaceService.AddEmployeeAsync(workspaceId, employeeRequest);
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Veox.Attendance.Record.Application.Contexts.Interfaces;
 using Veox.Attendance.Record.Application.Exceptions;
 using Veox.Attendance.Record.Application.Extensions;
 using Veox.Attendance.Record.Application.Models;
@@ -18,7 +19,10 @@ namespace Veox.Attendance.Record.Application.Services.Implementations
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IRecordRepository _recordRepository;
 
-        public RecordService(IEmployeeRepository employeeRepository, IRecordRepository recordRepository)
+        public RecordService(
+            IApplicationContext context,
+            IEmployeeRepository employeeRepository,
+            IRecordRepository recordRepository) : base(context)
         {
             _employeeRepository = employeeRepository;
             _recordRepository = recordRepository;

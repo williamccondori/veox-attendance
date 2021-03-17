@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Veox.Attendance.Identity.Application.Contexts.Interfaces;
 using Veox.Attendance.Identity.Application.Exceptions;
 using Veox.Attendance.Identity.Application.Helpers;
 using Veox.Attendance.Identity.Application.Models;
@@ -18,8 +19,9 @@ namespace Veox.Attendance.Identity.Application.Services.Implementations
         private readonly IUserProducer _userProducer;
 
         public UserService(
+            IApplicationContext context,
             IUserRepository userRepository,
-            IUserProducer userProducer)
+            IUserProducer userProducer) : base(context)
         {
             _userRepository = userRepository;
             _userProducer = userProducer;

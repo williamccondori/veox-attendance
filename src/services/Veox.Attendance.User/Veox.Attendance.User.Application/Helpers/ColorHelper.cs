@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Veox.Attendance.User.Application.Services.Helpers
+namespace Veox.Attendance.User.Application.Helpers
 {
     public static class ColorHelper
     {

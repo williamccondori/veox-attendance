@@ -2,7 +2,7 @@
 using FluentValidation;
 using Veox.Attendance.User.Application.Contexts.Interfaces;
 using Veox.Attendance.User.Application.Exceptions;
-using Veox.Attendance.User.Application.Services.Helpers;
+using Veox.Attendance.User.Application.Helpers;
 
 namespace Veox.Attendance.User.Application.Services.Implementations.Common
 {

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Veox.Attendance.Record.Api.Controllers.Common;
 using Veox.Attendance.Record.Application.Models;
 using Veox.Attendance.Record.Application.Services.Interfaces;
 using Veox.Attendance.Record.Application.Wrappers;
@@ -14,19 +13,21 @@ namespace Veox.Attendance.Record.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class RecordsController : BaseController<RecordsController>
+    public class RecordsController : ControllerBase
     {
+        private readonly ILogger<RecordsController> _logger;
         private readonly IRecordService _recordService;
 
         /// <summary>
         /// Record controller.
         /// </summary>
-        /// <param name="recordService">Record service.</param>
         /// <param name="logger">Logger service.</param>
+        /// <param name="recordService">Record service.</param>
         public RecordsController(
-            IRecordService recordService,
-            ILogger<RecordsController> logger) : base(logger)
+            ILogger<RecordsController> logger,
+            IRecordService recordService)
         {
+            _logger = logger;
             _recordService = recordService;
         }
 
@@ -39,7 +40,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         public async Task<ActionResult<Response<SummaryEmployeeResponse>>> Create(
             [FromBody] RecordCreateRequest recordCreateRequest)
         {
-            _logger.LogTrace("Excecuting <{MethodName}>", nameof(Create));
+            _logger.LogTrace(@"Executing: {Method}", nameof(Create));
 
             var result = await _recordService.CreateAsync(recordCreateRequest);
 
@@ -55,7 +56,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         public async Task<ActionResult<Response<SummaryEmployeeResponse>>> GetSummaryByEmployee(
             [FromQuery] SummaryEmployeeRequest summaryEmployeeRequest)
         {
-            _logger.LogTrace("Excecuting <{MethodName}>", nameof(GetSummaryByEmployee));
+            _logger.LogTrace(@"Executing: {Method}", nameof(GetSummaryByEmployee));
 
             var result = await _recordService.GetSummaryByEmployeeAsync(summaryEmployeeRequest);
 
@@ -71,7 +72,7 @@ namespace Veox.Attendance.Record.Api.Controllers
         public async Task<ActionResult<Response<List<DailySummaryResponse>>>> GetDailySummary(
             [FromQuery] DailySummaryRequest dailySummaryRequest)
         {
-            _logger.LogTrace("Excecuting <{MethodName}>", nameof(GetDailySummary));
+            _logger.LogTrace(@"Executing: {Method}", nameof(GetDailySummary));
 
             var result = await _recordService.GetDailySummaryAsync(dailySummaryRequest);
 

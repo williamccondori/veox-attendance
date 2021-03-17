@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Veox.Attendance.Identity.Api.Controllers.Common;
 using Veox.Attendance.Identity.Application.Models;
 using Veox.Attendance.Identity.Application.Services.Interfaces;
 
@@ -12,19 +11,21 @@ namespace Veox.Attendance.Identity.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class AuthController : BaseController<AuthController>
+    public class AuthController : ControllerBase
     {
+        private readonly ILogger<AuthController> _logger;
         private readonly IAuthService _authService;
         
         /// <summary>
         /// Auth controller.
         /// </summary>
-        /// <param name="authService">Auth service.</param>
         /// <param name="logger">Logger service.</param>
+        /// <param name="authService">Auth service.</param>
         public AuthController(
-            IAuthService authService,
-            ILogger<AuthController> logger) : base(logger)
+            ILogger<AuthController> logger,
+            IAuthService authService)
         {
+            _logger = logger;
             _authService = authService;
         }
         
@@ -37,7 +38,7 @@ namespace Veox.Attendance.Identity.Api.Controllers
         public async Task<ActionResult<AuthenticationResponse>> Authenticate(
             [FromBody] AuthenticationRequest authenticationRequest)
         {
-            LogTrace(nameof(Authenticate));
+            _logger.LogTrace(@"Executing: {Method}", nameof(Authenticate));
 
             var result = await _authService.AuthenticateAsync(authenticationRequest);
 

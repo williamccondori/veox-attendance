@@ -6,11 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Veox.Attendance.Workspace.Infraestructure.MongoDb\Veox.Attendance.Workspace.Infraestructure.MongoDb.csproj" />
-      <ProjectReference Include="..\Veox.Attendance.Workspace.IoC\Veox.Attendance.Workspace.IoC.csproj" />
+        <ProjectReference Include="..\Veox.Attendance.Workspace.IoC\Veox.Attendance.Workspace.IoC.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Consul" Version="0.7.2.6" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />

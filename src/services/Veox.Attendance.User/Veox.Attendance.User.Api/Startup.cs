@@ -118,37 +118,9 @@ namespace Veox.Attendance.User.Api
 
             app.UseHealthChecks("/health");
 
-            ConfigureConsul(app);
-        }
-
-        private void ConfigureConsul(IApplicationBuilder app)
-        {
             var serviceName = Configuration["Consul:ServiceName"];
             var serviceUri = Configuration["Consul:ServiceUri"];
-
-            var service = new Uri(serviceUri);
-            var client = app.ApplicationServices.GetRequiredService<IConsulClient>();
-
-            var serviceId = Guid.NewGuid();
-            var consulServiceId = $"{serviceName}:{serviceId}";
-
-            var serviceRegistration = new AgentServiceRegistration
-            {
-                ID = consulServiceId,
-                Address = service.Host,
-                Port = service.Port,
-                Name = serviceName,
-                Check = new AgentCheckRegistration
-                {
-                    HTTP = $"{serviceUri}/health",
-                    Notes = $"Checks {serviceUri}/health on {service.Host}:[{service.Port}]",
-                    Timeout = TimeSpan.FromSeconds(5),
-                    Interval = TimeSpan.FromSeconds(30),
-                    DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(60)
-                }
-            };
-
-            client.Agent.ServiceRegister(serviceRegistration).GetAwaiter().GetResult();
+            app.UseConsul(serviceName, serviceUri);
         }
     }
 }

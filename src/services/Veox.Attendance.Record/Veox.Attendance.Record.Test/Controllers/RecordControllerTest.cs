@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Veox.Attendance.Record.Api.Controllers;
 using Veox.Attendance.Record.Application.Models;
@@ -14,16 +14,18 @@ namespace Veox.Attendance.Record.Test.Controllers
     public class RecordControllerTest
     {
         private readonly Mock<IRecordService> _mockRecordService;
+        private readonly Mock<ILogger<RecordsController>> _mocklLogger;
+
 
         public RecordControllerTest()
         {
+            _mocklLogger = new Mock<ILogger<RecordsController>>(MockBehavior.Default);
             _mockRecordService = new Mock<IRecordService>(MockBehavior.Default);
         }
 
         private RecordsController CreateRecordsController()
         {
-            return new RecordsController(_mockRecordService.Object,
-                NullLogger<RecordsController>.Instance);
+            return new RecordsController(_mocklLogger.Object, _mockRecordService.Object);
         }
 
         [Fact]

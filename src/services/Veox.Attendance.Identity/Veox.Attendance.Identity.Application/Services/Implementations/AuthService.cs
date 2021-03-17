@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Veox.Attendance.Identity.Application.Contexts.Interfaces;
 using Veox.Attendance.Identity.Application.Exceptions;
 using Veox.Attendance.Identity.Application.Helpers;
 using Veox.Attendance.Identity.Application.Models;
@@ -18,8 +19,9 @@ namespace Veox.Attendance.Identity.Application.Services.Implementations
         private readonly IUserRepository _userRepository;
 
         public AuthService(
+            IApplicationContext context,
             IJwtBuilder jwtBuilder,
-            IUserRepository userRepository)
+            IUserRepository userRepository) : base(context)
         {
             _jwtBuilder = jwtBuilder;
             _userRepository = userRepository;

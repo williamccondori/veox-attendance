@@ -5,9 +5,11 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
-using Veox.Attendance.Workspace.Application.Contexts.Interfaces;
+using Veox.Attendance.Identity.Application.Contexts.Interfaces;
 
-namespace Veox.Attendance.Workspace.Api.Attributes
+// ReSharper disable UnusedType.Local
+
+namespace Veox.Attendance.Identity.Api.Attributes
 {
     /// <summary>
     /// Generate session attribute.
@@ -58,10 +60,10 @@ namespace Veox.Attendance.Workspace.Api.Attributes
                 var tokenString = headerValues.ToString()?.Substring(7) ?? string.Empty;
 
                 var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-                
+
                 if (!(jwtSecurityTokenHandler.ReadToken(tokenString) is JwtSecurityToken token))
                     throw new AuthenticationException();
-                
+
                 var userId = token.Claims.Single(x => x.Type == "userId").Value;
 
                 _applicationContext.Update(userId);

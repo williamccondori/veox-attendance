@@ -14,8 +14,8 @@ namespace Veox.Attendance.User.IoC
     {
         public static void AddServiceDependency(this IServiceCollection services)
         {
+            // Contexts.
             services.AddSingleton<IMongoDbContext, MongoDbContext>();
-
             services.AddScoped<ApplicationContext>();
             services.AddScoped<IApplicationContext>(x => x.GetRequiredService<ApplicationContext>());
 
