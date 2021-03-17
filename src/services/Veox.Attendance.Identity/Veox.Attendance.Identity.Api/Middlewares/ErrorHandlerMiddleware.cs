@@ -9,7 +9,7 @@ using Veox.Attendance.Identity.Application.Wrappers;
 
 namespace Veox.Attendance.Identity.Api.Middlewares
 {
-/// <summary>
+    /// <summary>
     /// Error handler middleware.
     /// </summary>
     /// ReSharper disable once ClassNeverInstantiated.Global
@@ -66,7 +66,7 @@ namespace Veox.Attendance.Identity.Api.Middlewares
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true
                 };
-                
+
                 var result = JsonSerializer.Serialize(responseModel, serializeOptions);
 
                 await response.WriteAsync(result);

@@ -29,6 +29,7 @@ namespace Veox.Attendance.User.Domain.Entities
         public string LastName { get; set; }
         public string Email { get; set; }
         public string ImageProfile { get; set; }
+        public string FullName => $"{Name} {LastName}";
 
         public static UserEntity Create(string id, string name, string lastName, string email, string imageProfile,
             string userId)

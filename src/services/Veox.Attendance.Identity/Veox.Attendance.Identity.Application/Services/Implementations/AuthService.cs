@@ -53,7 +53,10 @@ namespace Veox.Attendance.Identity.Application.Services.Implementations
                     throw new ApiException("Se ha desabilitado su acceso a la plataforma");
             }
 
-            var tokenContent = new Dictionary<string, string> {{"userId", userEntity.Id}};
+            var tokenContent = new Dictionary<string, string>
+            {
+                {"userId", userEntity.Id}
+            };
 
             var token = _jwtBuilder.GenerateToken(tokenContent);
 

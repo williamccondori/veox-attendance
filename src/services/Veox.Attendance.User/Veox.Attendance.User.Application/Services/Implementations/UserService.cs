@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Veox.Attendance.User.Application.Contexts.Interfaces;
 using Veox.Attendance.User.Application.Exceptions;
 using Veox.Attendance.User.Application.Models;
 using Veox.Attendance.User.Application.Services.Implementations.Common;
@@ -12,15 +14,66 @@ namespace Veox.Attendance.User.Application.Services.Implementations
     public class UserService : BaseService, IUserService
     {
         private readonly IUserRepository _userRepository;
-        //private readonly IUserProducer _userProducer;
 
         public UserService(
+            IApplicationContext context,
             IUserRepository userRepository
-            //IUserProducer userProducer
-        )
+        ) : base(context)
         {
             _userRepository = userRepository;
-            //_userProducer = userProducer;
+        }
+
+        public async Task<UserResponse> GetAsync()
+        {
+            var user = await GetUserById(_context.UserId);
+
+            return new UserResponse
+            {
+                User = new UserModelResponse
+                {
+                    Name = user.Name,
+                    LastName = user.LastName,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    ImageProfile = user.ImageProfile
+                }
+            };
+        }
+
+        public async Task<UserResponse> GetByIdAsync(string userId)
+        {
+            var user = await GetUserById(_context.UserId);
+
+            return new UserResponse
+            {
+                User = new UserModelResponse
+                {
+                    Name = user.Name,
+                    LastName = user.LastName,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    ImageProfile = user.ImageProfile
+                }
+            };
+        }
+
+        public async Task<UserUpdateResponse> UpdateAsync(UserUpdateRequest userRequest)
+        {
+            var user = await GetUserById(_context.UserId);
+            user.Name = userRequest.Name;
+            user.LastName = userRequest.LastName;
+            user.Update(_context.UserId);
+
+            var userUpdated = await _userRepository.Update(user.Id, user);
+
+            return new UserUpdateResponse
+            {
+                Name = userUpdated.Name,
+                LastName = userUpdated.LastName,
+                FullName = userUpdated.FullName,
+                Email = userUpdated.Email,
+                ImageProfile = userUpdated.ImageProfile
+            };
         }
 
         public async Task SaveAsync(SaveUserRequest saveUserRequest)
@@ -33,15 +86,27 @@ namespace Veox.Attendance.User.Application.Services.Implementations
             }
 
             var initials = string.Concat(
-                saveUserRequest.Name?.First(), 
+                saveUserRequest.Name?.First(),
                 saveUserRequest.LastName?.First());
-            
+
             var imageProfile = GetImageProfile(initials.ToUpper());
-            
+
             var userEntity = UserEntity.Create(saveUserRequest.Id, saveUserRequest.Name, saveUserRequest.LastName,
                 saveUserRequest.Email, imageProfile, saveUserRequest.Id);
 
             await _userRepository.Create(userEntity);
+        }
+
+        private async Task<UserEntity> GetUserById(string userId)
+        {
+            var user = await _userRepository.GetById(userId);
+
+            if (user == null)
+            {
+                throw new KeyNotFoundException("The user has not been found");
+            }
+
+            return user;
         }
     }
 }

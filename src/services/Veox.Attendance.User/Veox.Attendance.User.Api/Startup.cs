@@ -1,51 +1,108 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Veox.Attendance.User.Api.Attributes;
+using Veox.Attendance.User.Api.Extensions;
+using Veox.Attendance.User.Infraestructure.MongoDb;
 using Veox.Attendance.User.IoC;
 
 namespace Veox.Attendance.User.Api
 {
+    /// <summary>
+    /// Init the application.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Init the application.
+        /// </summary>
+        /// <param name="configuration">App's configuration.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(GenerateSessionAttribute));
+                options.Filters.Add(typeof(ErrorHandlerAttribute));
+                options.EnableEndpointRouting = false;
+            });
+
             services.AddControllers();
+
+            services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
+
+            var securityKey = Encoding.ASCII.GetBytes(Configuration["Jwt:SecretId"]);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(securityKey),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            services.AddSwaggerConfiguration();
+
+            services.AddApiVersioningExtension();
+
+            services.AddHealthChecks();
 
             services.AddServiceDependency();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">Application builder.</param>
+        /// <param name="env">Web host environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseSwaggerSetup();
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            app.UseHealthChecks("/health");
         }
     }
 }
