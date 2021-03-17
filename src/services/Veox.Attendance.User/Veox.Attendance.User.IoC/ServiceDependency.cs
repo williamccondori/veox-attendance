@@ -22,7 +22,7 @@ namespace Veox.Attendance.User.IoC
             // Repositories.
             services.AddScoped<IUserRepository, UserRepository>();
 
-            // Applications services.
+            // Application services.
             services.AddScoped<IUserService, UserService>();
         }
     }

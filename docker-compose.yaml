@@ -1,12 +1,58 @@
 version: "3.4"
 
 services:
-  attendance-register_db:
-    image: mongo
-    container_name: attendance-register_db
+  # Databases
+
+  # attendance-db:
+  #   image: mongo
+  #   container_name: attendance-db
+  #   restart: always
+  #   ports:
+  #     - 7000:27017
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: ficticio
+
+  # Microservicces
+
+  attendance-identity:
+    build:
+      context: src/services/Veox.Attendance.Identity
+      dockerfile: Dockerfile
+    image: attendance-identity:latest
+    container_name: attendance-identity
     restart: always
-    ports: 
-      - 7000:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: ficticio
+
+  attendance-record:
+    build:
+      context: src/services/Veox.Attendance.Record
+      dockerfile: Dockerfile
+    image: attendance-record:latest
+    container_name: attendance-record
+    restart: always
+
+  attendance-user:
+    build:
+      context: src/services/Veox.Attendance.User
+      dockerfile: Dockerfile
+    image: attendance-user:latest
+    container_name: attendance-user
+    restart: always
+
+  attendance-workspace:
+    build:
+      context: src/services/Veox.Attendance.Workspace
+      dockerfile: Dockerfile
+    image: attendance-workspace:latest
+    container_name: attendance-workspace
+    restart: always
+
+  # API Gateway
+
+  attendance-api:
+    build:
+      context: src/gateway/Veox.Attendance.Gateway
+      dockerfile: Dockerfile
+    image: attendance-api:latest
+    container_name: attendance-api
+    restart: always

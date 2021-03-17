@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Veox.Attendance.Workspace.Application.Contexts.Implementations;
+using Veox.Attendance.Workspace.Application.Contexts.Interfaces;
 using Veox.Attendance.Workspace.Application.Services.Implementations;
 using Veox.Attendance.Workspace.Application.Services.Interfaces;
 using Veox.Attendance.Workspace.Domain.Repositories;
@@ -14,8 +16,13 @@ namespace Veox.Attendance.Workspace.IoC
         {
             services.AddSingleton<IMongoDbContext, MongoDbContext>();
             
+            services.AddScoped<ApplicationContext>();
+            services.AddScoped<IApplicationContext>(x => x.GetRequiredService<ApplicationContext>());
+            
+            // Repositories.
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 
+            // Application services.
             services.AddScoped<IWorkspaceService, WorkspaceService>();
         }
     }

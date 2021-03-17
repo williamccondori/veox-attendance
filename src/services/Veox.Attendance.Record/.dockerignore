@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/out/
+
+Dockerfile*
+**/*.trx
+**/*.md
+**/*.ps1
+**/*.cmd
+**/*.sh
+**/.DS_Store

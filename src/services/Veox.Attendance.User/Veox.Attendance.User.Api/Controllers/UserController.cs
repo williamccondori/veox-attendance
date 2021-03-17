@@ -12,9 +12,9 @@ namespace Veox.Attendance.User.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
 
         /// <summary>
@@ -22,8 +22,8 @@ namespace Veox.Attendance.User.Api.Controllers
         /// </summary>
         /// <param name="logger">Logger service.</param>
         /// <param name="userService">User service.</param>
-        public UsersController(
-            ILogger<UsersController> logger,
+        public UserController(
+            ILogger<UserController> logger,
             IUserService userService)
         {
             _logger = logger;

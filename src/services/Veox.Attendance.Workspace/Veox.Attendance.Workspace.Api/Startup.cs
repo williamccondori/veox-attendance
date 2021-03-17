@@ -1,8 +1,12 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Veox.Attendance.Workspace.Api.Attributes;
 using Veox.Attendance.Workspace.Api.Extensions;
 using Veox.Attendance.Workspace.Infraestructure.MongoDb;
 using Veox.Attendance.Workspace.IoC;
@@ -31,9 +35,37 @@ namespace Veox.Attendance.Workspace.Api
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
+            services.AddCors();
+
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(GenerateSessionAttribute));
+                options.Filters.Add(typeof(ErrorHandlerAttribute));
+                options.EnableEndpointRouting = false;
+            });
 
             services.AddControllers();
+
+            services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
+
+            var securityKey = Encoding.ASCII.GetBytes(Configuration["Jwt:SecretId"]);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(securityKey),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             services.AddSwaggerConfiguration();
 
@@ -62,15 +94,15 @@ namespace Veox.Attendance.Workspace.Api
 
             app.UseRouting();
 
-            app.UseAuthorization();
-            
-            app.UseErrorHandler();
+            app.UseAuthentication();
 
-            app.UseHealthChecks("/health");
+            app.UseAuthorization();
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            app.UseHealthChecks("/health");
         }
     }
 }

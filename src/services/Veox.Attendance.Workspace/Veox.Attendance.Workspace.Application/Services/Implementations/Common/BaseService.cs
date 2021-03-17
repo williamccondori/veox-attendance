@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FluentValidation;
+using Veox.Attendance.Workspace.Application.Contexts.Interfaces;
 using Veox.Attendance.Workspace.Application.Exceptions;
 using Veox.Attendance.Workspace.Application.Helpers;
 
@@ -7,6 +8,13 @@ namespace Veox.Attendance.Workspace.Application.Services.Implementations.Common
 {
     public class BaseService
     {
+        protected readonly IApplicationContext _context;
+        
+        protected  BaseService(IApplicationContext context)
+        {
+            _context = context;
+        }
+        
         protected static void Validate<TValidator, TModel>(TValidator validator, TModel model)
             where TValidator : AbstractValidator<TModel>
         {

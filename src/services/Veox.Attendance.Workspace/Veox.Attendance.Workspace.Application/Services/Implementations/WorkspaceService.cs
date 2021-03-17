@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Veox.Attendance.Workspace.Application.Contexts.Interfaces;
 using Veox.Attendance.Workspace.Application.Exceptions;
 using Veox.Attendance.Workspace.Application.Models;
 using Veox.Attendance.Workspace.Application.Services.Implementations.Common;
@@ -16,15 +17,17 @@ namespace Veox.Attendance.Workspace.Application.Services.Implementations
     {
         private readonly IWorkspaceRepository _workspaceRepository;
 
-        public WorkspaceService(IWorkspaceRepository workspaceRepository)
+        public WorkspaceService(
+            IApplicationContext context,
+            IWorkspaceRepository workspaceRepository) : base(context)
         {
             _workspaceRepository = workspaceRepository;
         }
-        
+
         public async Task<List<WorkspaceResponse>> GetAsync()
         {
             const string employeeId = "6047e634792b138a0fd82385";
-            
+
             var workspaceEntities = await _workspaceRepository.GetByEmployee(employeeId);
             var workspaces = workspaceEntities.ToList();
 
@@ -39,7 +42,7 @@ namespace Veox.Attendance.Workspace.Application.Services.Implementations
 
         public async Task<WorkspaceResponse> CreateAsync(WorkspaceRequest workspaceRequest)
         {
-            Validate(new WorkspaceRequestValidator(),workspaceRequest);
+            Validate(new WorkspaceRequestValidator(), workspaceRequest);
 
             var workspace = await _workspaceRepository.GetByIdentifier(workspaceRequest.Identifier);
 
@@ -49,14 +52,14 @@ namespace Veox.Attendance.Workspace.Application.Services.Implementations
             }
 
             // Generate image profile.
-            
+
             var initials = workspaceRequest.Identifier.Substring(0, 2);
             var imageProfile = GetImageProfile(initials.ToUpper());
 
             // Save the entity.
-            
+
             var newWorkspace = WorkspaceEntity.Create(workspaceRequest.Name, workspaceRequest.Identifier,
-                workspaceRequest.Description, imageProfile, string.Empty);
+                workspaceRequest.Description, imageProfile, _context.UserId);
             newWorkspace = await _workspaceRepository.Create(newWorkspace);
 
             var workspaceResponse = new WorkspaceResponse
