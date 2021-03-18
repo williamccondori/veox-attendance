@@ -6,6 +6,20 @@
       "ServiceName": "attendance-user",
       "UpstreamPathTemplate": "/api/users",
       "UpstreamHttpMethod": ["Get"]
+    },
+    {
+      "DownstreamPathTemplate": "/auth/login",
+      "DownstreamScheme": "http",
+      "ServiceName": "attendance-identity",
+      "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamHttpMethod": ["Get", "Post"]
+    },
+    {
+      "DownstreamPathTemplate": "/user",
+      "DownstreamScheme": "http",
+      "ServiceName": "attendance-identity",
+      "UpstreamPathTemplate": "/api/auth/users",
+      "UpstreamHttpMethod": ["Get", "Post"]
     }
   ],
   "GlobalConfiguration": {
