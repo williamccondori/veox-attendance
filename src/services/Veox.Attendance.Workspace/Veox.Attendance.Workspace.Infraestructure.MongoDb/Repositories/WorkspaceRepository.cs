@@ -16,15 +16,21 @@ namespace Veox.Attendance.Workspace.Infraestructure.MongoDb.Repositories
             _context = context;
         }
 
-        public async Task<WorkspaceEntity> GetByIdentifier(string workspaceIdentifier)
+        public async Task<WorkspaceEntity> GetById(string workspaceId)
         {
-            var cursor = await _context.Workspaces.FindAsync(x =>
-                x.IsActive && x.Identifier.Equals(workspaceIdentifier));
+            var cursor = await _context.Workspaces.FindAsync(x => x.Id.Equals(workspaceId));
 
             return await cursor.FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<WorkspaceEntity>> GetByEmployee(string employeeId)
+        public async Task<WorkspaceEntity> GetByIdentifier(string workspaceIdentifier)
+        {
+            var cursor = await _context.Workspaces.FindAsync(x => x.Identifier.Equals(workspaceIdentifier));
+
+            return await cursor.FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<WorkspaceEntity>> GetAllByEmployee(string employeeId)
         {
             var cursor = await _context.Workspaces.FindAsync(x => x.IsActive);
 

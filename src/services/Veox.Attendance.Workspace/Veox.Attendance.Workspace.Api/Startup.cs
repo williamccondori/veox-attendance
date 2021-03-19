@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Veox.Attendance.Workspace.Api.Attributes;
 using Veox.Attendance.Workspace.Api.Extensions;
 using Veox.Attendance.Workspace.Infraestructure.MongoDb;
+using Veox.Attendance.Workspace.Infraestructure.RabbitMq;
 using Veox.Attendance.Workspace.IoC;
 
 namespace Veox.Attendance.Workspace.Api
@@ -49,6 +50,7 @@ namespace Veox.Attendance.Workspace.Api
             services.AddControllers();
 
             services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
+            services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMq"));
 
             var securityKey = Encoding.ASCII.GetBytes(Configuration["Jwt:SecretId"]);
 
@@ -101,6 +103,12 @@ namespace Veox.Attendance.Workspace.Api
 
                 app.UseSwaggerSetup();
             }
+            else
+            {
+                var serviceName = Configuration["Consul:ServiceName"];
+                var serviceUri = Configuration["Consul:ServiceUri"];
+                app.UseConsul(serviceName, serviceUri);
+            }
 
             app.UseHttpsRedirection();
 
@@ -115,10 +123,6 @@ namespace Veox.Attendance.Workspace.Api
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseHealthChecks("/health");
-
-            var serviceName = Configuration["Consul:ServiceName"];
-            var serviceUri = Configuration["Consul:ServiceUri"];
-            app.UseConsul(serviceName, serviceUri);
         }
     }
 }

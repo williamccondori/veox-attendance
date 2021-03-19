@@ -31,8 +31,24 @@ namespace Veox.Attendance.Workspace.Infraestructure.MongoDb.Contexts.Implementat
                 cm.MapAuditableFields();
                 cm.AutoMap();
             });
+            
+            BsonClassMap.RegisterClassMap<EmployeeEntity>(cm =>
+            {
+                cm.MapId();
+                cm.MapAuditableFields();
+                cm.AutoMap();
+            });
+            
+            BsonClassMap.RegisterClassMap<GroupEntity>(cm =>
+            {
+                cm.MapId();
+                cm.MapAuditableFields();
+                cm.AutoMap();
+            });
         }
 
         public IMongoCollection<WorkspaceEntity> Workspaces => _database.GetCollection<WorkspaceEntity>("workspaces");
+        public IMongoCollection<EmployeeEntity> Employees => _database.GetCollection<EmployeeEntity>("employees");
+        public IMongoCollection<GroupEntity> Groups => _database.GetCollection<GroupEntity>("groups");
     }
 }

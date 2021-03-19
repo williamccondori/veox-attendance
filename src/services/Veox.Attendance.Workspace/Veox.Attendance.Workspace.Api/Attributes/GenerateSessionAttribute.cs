@@ -63,8 +63,9 @@ namespace Veox.Attendance.Workspace.Api.Attributes
                     throw new AuthenticationException();
                 
                 var userId = token.Claims.Single(x => x.Type == "userId").Value;
+                var employeeId = token.Claims.Single(x => x.Type == "employeeId").Value;
 
-                _applicationContext.Update(userId);
+                _applicationContext.Update(userId, employeeId);
             }
             catch (Exception exception)
             {

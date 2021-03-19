@@ -6,5 +6,6 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public string ImageProfile { get; set; }
+        public string EmployeeId { get; set; }
     }
 }

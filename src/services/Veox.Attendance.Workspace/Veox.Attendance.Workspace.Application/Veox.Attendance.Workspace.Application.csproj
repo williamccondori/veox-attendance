@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Veox.Attendance.Workspace.Domain\Veox.Attendance.Workspace.Domain.csproj" />
+      <ProjectReference Include="..\Veox.Attendance.Workspace.Infraestructure.RabbitMq\Veox.Attendance.Workspace.Infraestructure.RabbitMq.csproj" />
     </ItemGroup>
 
 </Project>

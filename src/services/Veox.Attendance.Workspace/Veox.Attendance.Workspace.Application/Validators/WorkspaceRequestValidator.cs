@@ -22,6 +22,15 @@ namespace Veox.Attendance.Workspace.Application.Validators
                 .NotEmpty()
                 .NotNull()
                 .MaximumLength(300);
+
+            RuleFor(x => x.User)
+                .NotNull();
+
+            RuleFor(x => x.DocumentNumber)
+                .NotNull().NotEmpty();
+            
+            RuleFor(x => x.TotalHours)
+                .NotNull().NotEqual(0);
         }
     }
 }

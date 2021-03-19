@@ -7,6 +7,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Veox.Attendance.Workspace.Application\Veox.Attendance.Workspace.Application.csproj" />
         <ProjectReference Include="..\Veox.Attendance.Workspace.Infraestructure.MongoDb\Veox.Attendance.Workspace.Infraestructure.MongoDb.csproj" />
+        <ProjectReference Include="..\Veox.Attendance.Workspace.Infraestructure.RabbitMq\Veox.Attendance.Workspace.Infraestructure.RabbitMq.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -20,6 +20,13 @@
       "ServiceName": "attendance-identity",
       "UpstreamPathTemplate": "/api/auth/users",
       "UpstreamHttpMethod": ["Get", "Post"]
+    },
+    {
+      "DownstreamPathTemplate": "/workspace/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "attendance-workspace",
+      "UpstreamPathTemplate": "/api/workspaces/{everything}",
+      "UpstreamHttpMethod": ["Get", "Post", "Post"]
     }
   ],
   "GlobalConfiguration": {
